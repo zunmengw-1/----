@@ -12,13 +12,18 @@ import numpy as np
 import pandas as pd
 import torch
 
-from data import read_dates
-from evaluate_cost_gate import QUANTILES, RETURN_COLUMN, fit_return_buckets
-from evaluate_costs import END, ROOT, SLOTS, START
-from features import encode_windows
-from replay_one_minute import collect_candidates, eligible_stock_days, save_results
-from score_economics import _score_parameters
-from train import encode
+from intraday_tcn.data import read_dates
+from intraday_tcn.evaluation.scores import _score_parameters
+from intraday_tcn.features import encode_windows
+from intraday_tcn.paths import DEFAULT_DAILY_SOURCE, DEFAULT_PROVIDER, DEFAULT_RUN
+from intraday_tcn.replay.cost_gate import QUANTILES, RETURN_COLUMN, fit_return_buckets
+from intraday_tcn.replay.execution import END, SLOTS, START
+from intraday_tcn.replay.minute import (
+    collect_candidates,
+    eligible_stock_days,
+    save_results,
+)
+from intraday_tcn.training.train import encode
 
 METHODS = ("shared", "adapted", "static")
 SCORES = ["shared_bp", "adapted_bp"]
@@ -67,15 +72,15 @@ def _combine_candidate_runs(runs):
     return combined_tables, np.sum(daily, axis=0), [row for shard in examples for row in shard], audit
 
 
-def main():
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--run-dir", type=Path, default=ROOT / "output/tcn_mainboard_joint_01")
-    parser.add_argument("--provider", type=Path, default=ROOT / "data/qlib_cn_1min")
-    parser.add_argument("--daily-source", type=Path, default=ROOT / "市场微观结构研究/cache/daily_summary.parquet")
+    parser.add_argument("--run-dir", type=Path, default=DEFAULT_RUN)
+    parser.add_argument("--provider", type=Path, default=DEFAULT_PROVIDER)
+    parser.add_argument("--daily-source", type=Path, default=DEFAULT_DAILY_SOURCE)
     parser.add_argument("--example-symbol", default="SH600000")
     parser.add_argument("--entry", choices=("next_open", "signal_close"), default="next_open")
     parser.add_argument("--workers", type=int, default=1, help="Independent CPU processes across stocks")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.workers < 1:
         parser.error("--workers must be positive")
     provider = args.provider.resolve()

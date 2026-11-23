@@ -14,15 +14,23 @@ from scipy.optimize import minimize
 from torch.nn import functional as F
 from torch.nn.utils.parametrize import cached
 
-from data import history_mainboard_eligibility, load_bars, pilot_eligibility, read_dates, read_eligibility
-from evaluation import daily_metrics, summarize_daily, write_daily
-from features import FEATURE_NAMES, build_samples, encode_windows, find_targets
-from model import ReturnTCN
+from intraday_tcn.data import (
+    history_mainboard_eligibility,
+    load_bars,
+    pilot_eligibility,
+    read_dates,
+    read_eligibility,
+)
+from intraday_tcn.evaluation.metrics import daily_metrics, summarize_daily, write_daily
+from intraday_tcn.features import (
+    FEATURE_NAMES,
+    build_samples,
+    encode_windows,
+    find_targets,
+)
+from intraday_tcn.paths import DEFAULT_DAILY_SOURCE, DEFAULT_PROVIDER
+from intraday_tcn.training.model import ReturnTCN
 
-
-ROOT = Path(__file__).resolve().parents[1]
-RAW_HISTORY = ROOT / "data/questdb-trial/dbroot/db/stock_minute_history~16"
-DAILY_SUMMARY = ROOT / "市场微观结构研究/cache/daily_summary.parquet"
 CONTINUOUS = np.array([*range(5), *range(7, 17)])
 WINDOW, SIGNALS_PER_STOCK_DAY = 30, 169
 
@@ -145,7 +153,7 @@ def prepare_training(provider, universe, training_dates, scratch, cap, by_day, r
 
 def shared_fit(x_store, y_store, scaler, args, device, rng):
     if args.fast_cpu:
-        from fast_tcn import FastReturnTCN
+        from intraday_tcn.training.fast_tcn import FastReturnTCN
 
         model = FastReturnTCN()
     else:
@@ -277,13 +285,13 @@ def positive_int(raw):
     return value
 
 
-def main():
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--provider", type=Path, default=ROOT / "data/qlib_cn_1min")
+    parser.add_argument("--provider", type=Path, default=DEFAULT_PROVIDER)
     source_group = parser.add_mutually_exclusive_group()
     source_group.add_argument("--eligibility", type=Path, help="外部核验的 date,symbol 逐日股票池 CSV")
     source_group.add_argument("--history-mainboard", action="store_true", help="用历史简称和成交近似筛选广覆盖主板")
-    parser.add_argument("--daily-source", type=Path, default=DAILY_SUMMARY if DAILY_SUMMARY.is_file() else RAW_HISTORY)
+    parser.add_argument("--daily-source", type=Path, default=DEFAULT_DAILY_SOURCE)
     parser.add_argument("--pilot-stocks", type=positive_int, default=12)
     parser.add_argument("--out", type=Path, required=True, help="新的输出目录")
     parser.add_argument("--epochs", type=positive_int, default=4)
@@ -301,7 +309,7 @@ def main():
     parser.add_argument("--seed", type=int, default=2025)
     parser.add_argument("--device", choices=["auto", "cpu", "mps", "cuda"], default="auto")
     parser.add_argument("--fast-cpu", action="store_true", help="CPU 上使用等价的展开矩阵乘法执行卷积")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.train_cap_per_stock is None:
         args.train_cap_per_stock = 256 if args.history_mainboard or args.eligibility else 8_000
     if args.train_cap_per_stock < 0 or args.eval_stock_cap < 0:

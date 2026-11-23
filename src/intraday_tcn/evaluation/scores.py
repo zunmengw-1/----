@@ -14,11 +14,11 @@ import pyarrow.parquet as pq
 import torch
 from torch.nn.utils.parametrize import cached
 
-from data import history_mainboard_eligibility, load_bars, read_dates
-from fast_tcn import FastReturnTCN
-from features import FEATURE_NAMES, encode_windows, find_targets
-from train import ROOT, Scaler, encode
-
+from intraday_tcn.data import history_mainboard_eligibility, load_bars, read_dates
+from intraday_tcn.features import FEATURE_NAMES, encode_windows, find_targets
+from intraday_tcn.paths import DEFAULT_PROVIDER, DEFAULT_RUN
+from intraday_tcn.training.fast_tcn import FastReturnTCN
+from intraday_tcn.training.train import Scaler, encode
 
 SIGNALS = ("tcn", "reversal", "momentum")
 QUANTILES = (20, 40, 60, 80)
@@ -172,11 +172,11 @@ def _stock_profile(
     return result
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--run-dir", type=Path, default=ROOT / "output/tcn_mainboard_joint_01")
-    parser.add_argument("--provider", type=Path, default=ROOT / "data/qlib_cn_1min")
-    args = parser.parse_args()
+    parser.add_argument("--run-dir", type=Path, default=DEFAULT_RUN)
+    parser.add_argument("--provider", type=Path, default=DEFAULT_PROVIDER)
+    args = parser.parse_args(argv)
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
     pa.set_cpu_count(1)

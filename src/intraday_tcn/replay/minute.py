@@ -11,13 +11,19 @@ import pandas as pd
 import torch
 from torch.nn.utils.parametrize import cached
 
-from data import load_bars, read_dates
-from evaluate_cost_gate import projected_margin_bp
-from evaluate_costs import (
+from intraday_tcn.data import load_bars, read_dates
+from intraday_tcn.evaluation.scores import (
+    _development_days,
+    _score_parameters,
+    _signals,
+)
+from intraday_tcn.features import find_signal_coords
+from intraday_tcn.paths import DEFAULT_DAILY_SOURCE, DEFAULT_PROVIDER
+from intraday_tcn.replay.cost_gate import projected_margin_bp
+from intraday_tcn.replay.execution import (
     END,
     METHODS,
     RESULTS,
-    ROOT,
     SCORES,
     SLIPPAGE,
     START,
@@ -29,8 +35,6 @@ from evaluate_costs import (
     summary,
     time_label,
 )
-from features import find_signal_coords
-from score_economics import _development_days, _score_parameters, _signals
 
 
 def load_calibration(path):
@@ -177,13 +181,13 @@ def save_results(
     return report
 
 
-def main():
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--economics", type=Path, default=RESULTS)
-    parser.add_argument("--provider", type=Path, default=ROOT / "data/qlib_cn_1min")
-    parser.add_argument("--daily-source", type=Path, default=ROOT / "市场微观结构研究/cache/daily_summary.parquet")
+    parser.add_argument("--provider", type=Path, default=DEFAULT_PROVIDER)
+    parser.add_argument("--daily-source", type=Path, default=DEFAULT_DAILY_SOURCE)
     parser.add_argument("--example-symbol", default="SH600000")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
     provider = args.provider.resolve()

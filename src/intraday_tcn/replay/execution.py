@@ -11,10 +11,17 @@ import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 
-from data import BAR_FIELDS, MINUTES, SESSION_LENGTHS, _calendar, load_bars, read_dates
+from intraday_tcn.data import (
+    BAR_FIELDS,
+    MINUTES,
+    SESSION_LENGTHS,
+    _calendar,
+    load_bars,
+    read_dates,
+)
+from intraday_tcn.paths import DEFAULT_DAILY_SOURCE, DEFAULT_PROVIDER, DEFAULT_RUN
 
-ROOT = Path(__file__).resolve().parents[1]
-RESULTS = ROOT / "output" / "tcn_mainboard_joint_01" / "economics"
+RESULTS = DEFAULT_RUN / "economics"
 START = date(2025, 9, 12)
 END = date(2025, 11, 27)
 METHODS = ("tcn", "reversal", "momentum", "static")
@@ -283,14 +290,14 @@ def summary(daily: pd.DataFrame) -> pd.DataFrame:
     return report.reset_index().sort_values(["slippage_bp_per_side", "strategy"])
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scores", type=Path, default=RESULTS / "signal_scores.parquet")
     parser.add_argument("--profiles", type=Path, default=RESULTS / "stock_profiles.csv")
-    parser.add_argument("--provider", type=Path, default=ROOT / "data" / "qlib_cn_1min")
-    parser.add_argument("--daily-source", type=Path, default=ROOT / "市场微观结构研究" / "cache" / "daily_summary.parquet")
+    parser.add_argument("--provider", type=Path, default=DEFAULT_PROVIDER)
+    parser.add_argument("--daily-source", type=Path, default=DEFAULT_DAILY_SOURCE)
     parser.add_argument("--out", type=Path, default=RESULTS)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     provider = args.provider.resolve()
     days = [day for day in read_dates(provider) if START <= day <= END]
     if len(days) != 49:

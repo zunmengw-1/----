@@ -9,8 +9,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from intraday_tcn.paths import DEFAULT_RUN
 
-OUTPUT = Path(__file__).resolve().parents[1] / "output/tcn_mainboard_joint_01/economics"
+OUTPUT = DEFAULT_RUN / "economics"
 QUINTILES = range(1, 6)
 CUTOFFS = ["tcn_q20", "tcn_q40", "tcn_q60", "tcn_q80"]
 
@@ -68,10 +69,10 @@ def rank_ic_values(ic: pd.DataFrame, column: str) -> dict:
     }
 
 
-def main():
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--directory", type=Path, default=OUTPUT)
-    directory = parser.parse_args().directory
+    directory = parser.parse_args(argv).directory
     profiles, cutoffs = profiles_by_type(pd.read_csv(directory / "stock_profiles.csv"))
     scores = pd.read_parquet(directory / "signal_scores.parquet")
     ic = pd.read_parquet(directory / "stock_day_ic.parquet")

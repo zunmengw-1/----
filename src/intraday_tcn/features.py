@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import numpy as np
 
-
 FEATURE_NAMES: tuple[str, ...] = (
     "relative_open",
     "relative_high",

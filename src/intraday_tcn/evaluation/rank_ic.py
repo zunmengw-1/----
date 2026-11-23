@@ -9,6 +9,7 @@ import pandas as pd
 import pyarrow.parquet as pq
 from scipy.stats import rankdata
 
+from intraday_tcn.paths import DEFAULT_RUN
 
 DEVELOPMENT_START = "2025-09-12"
 DEVELOPMENT_END = "2025-11-27"
@@ -25,10 +26,7 @@ METRICS = (*RESEARCH_METHODS, EXECUTION_METRIC)
 SCORE_COLUMNS = [*SIGNAL_KEYS, *RESEARCH_METHODS.values(), "label_bp", "execution_return_bp"]
 BLOCK_LENGTH = 5
 BOOTSTRAP_DRAWS = 10_000
-DEFAULT_SCORES = (
-    Path(__file__).resolve().parents[1]
-    / "output/tcn_mainboard_joint_01/economics/signal_scores.parquet"
-)
+DEFAULT_SCORES = DEFAULT_RUN / "economics/signal_scores.parquet"
 
 
 def _rank_ic(scores: np.ndarray, target_ranks: np.ndarray) -> np.ndarray:
@@ -192,11 +190,11 @@ def _check_reference(scores_path: Path, result: dict) -> None:
     result["reference_check"] = {"mean_daily_rank_ic": expected, "difference": observed - expected}
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scores", type=Path, default=DEFAULT_SCORES)
     parser.add_argument("--out", type=Path)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     out = args.out or args.scores.parent
 
     scores = pq.read_table(

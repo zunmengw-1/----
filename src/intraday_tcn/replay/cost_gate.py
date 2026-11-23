@@ -9,15 +9,15 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from data import read_dates
-from evaluate_costs import (
+from intraday_tcn.data import read_dates
+from intraday_tcn.paths import DEFAULT_DAILY_SOURCE, DEFAULT_PROVIDER
+from intraday_tcn.replay.execution import (
     COMMISSION,
     END,
     METHODS,
     MIN_COMMISSION,
     ORDER_SHARES,
     RESULTS,
-    ROOT,
     SCORES,
     SLIPPAGE,
     SLOTS,
@@ -105,12 +105,12 @@ def _finite_max(values: np.ndarray) -> float | None:
     return float(finite.max()) if len(finite) else None
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--economics", type=Path, default=RESULTS)
-    parser.add_argument("--provider", type=Path, default=ROOT / "data/qlib_cn_1min")
-    parser.add_argument("--daily-source", type=Path, default=ROOT / "市场微观结构研究/cache/daily_summary.parquet")
-    args = parser.parse_args()
+    parser.add_argument("--provider", type=Path, default=DEFAULT_PROVIDER)
+    parser.add_argument("--daily-source", type=Path, default=DEFAULT_DAILY_SOURCE)
+    args = parser.parse_args(argv)
     data = args.economics
     output = data / "cost_gate"
     calibration = pd.read_parquet(output / "calibration_signals.parquet", columns=["date", *SCORES, RETURN_COLUMN])

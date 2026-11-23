@@ -13,8 +13,8 @@ import torch
 from scipy.stats import rankdata
 from torch.nn.utils.parametrize import cached
 
-from data import load_bars, read_dates
-from evaluate_ic_distribution import (
+from intraday_tcn.data import load_bars, read_dates
+from intraday_tcn.evaluation.rank_ic import (
     BLOCK_LENGTH,
     BOOTSTRAP_DRAWS,
     DEVELOPMENT_END,
@@ -28,12 +28,11 @@ from evaluate_ic_distribution import (
     _rank_ic,
     _summary,
 )
-from features import encode_windows
-from score_economics import _date_range, _score_parameters
-from train import encode
+from intraday_tcn.evaluation.scores import _date_range, _score_parameters
+from intraday_tcn.features import encode_windows
+from intraday_tcn.paths import DEFAULT_PROVIDER, DEFAULT_RUN
+from intraday_tcn.training.train import encode
 
-ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_RUN = ROOT / "output/tcn_mainboard_joint_01"
 SCORE_COLUMNS = [*SIGNAL_KEYS, "tcn_bp", "label_bp", "execution_return_bp"]
 TARGETS = {"research": "label_bp", "execution": "execution_return_bp"}
 SCORES = {"shared": "tcn_bp", "adapted": "adapted_bp"}
@@ -167,13 +166,13 @@ def _load_development(run_dir: Path, provider: Path) -> tuple[pd.DataFrame, dict
     return scores, reference
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", type=Path, default=DEFAULT_RUN)
-    parser.add_argument("--provider", type=Path, default=ROOT / "data/qlib_cn_1min")
+    parser.add_argument("--provider", type=Path, default=DEFAULT_PROVIDER)
     parser.add_argument("--heads", type=Path)
     parser.add_argument("--threads", type=int, default=1)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.threads < 1:
         parser.error("--threads must be positive")
     torch.set_num_threads(args.threads)

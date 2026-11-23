@@ -13,13 +13,17 @@ import pyarrow.parquet as pq
 import torch
 from torch.nn.utils.parametrize import cached
 
-from data import history_mainboard_eligibility, load_bars, read_dates
-from features import find_targets
-from score_economics import (
-    SAMPLE_EVERY, SCORE_SCHEMA, _date_range, _execution_returns, _score_parameters, _signals,
+from intraday_tcn.data import history_mainboard_eligibility, load_bars, read_dates
+from intraday_tcn.evaluation.scores import (
+    SAMPLE_EVERY,
+    SCORE_SCHEMA,
+    _date_range,
+    _execution_returns,
+    _score_parameters,
+    _signals,
 )
-from train import ROOT
-
+from intraday_tcn.features import find_targets
+from intraday_tcn.paths import DEFAULT_PROVIDER, DEFAULT_RUN
 
 CALIBRATION_SCHEMA = pa.schema([field for field in SCORE_SCHEMA if field.name != "label_bp"])
 
@@ -52,11 +56,11 @@ def _calibrate_stock(
     )
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--run-dir", type=Path, default=ROOT / "output/tcn_mainboard_joint_01")
-    parser.add_argument("--provider", type=Path, default=ROOT / "data/qlib_cn_1min")
-    args = parser.parse_args()
+    parser.add_argument("--run-dir", type=Path, default=DEFAULT_RUN)
+    parser.add_argument("--provider", type=Path, default=DEFAULT_PROVIDER)
+    args = parser.parse_args(argv)
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
     pa.set_cpu_count(1)

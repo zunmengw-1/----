@@ -3,7 +3,7 @@
 from torch import Tensor, nn
 from torch.nn import functional as F
 
-from model import ReturnTCN
+from intraday_tcn.training.model import ReturnTCN
 
 
 def _temporal_layer(x: Tensor, layer: nn.Sequential, *, causal: bool = False) -> Tensor:

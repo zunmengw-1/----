@@ -13,15 +13,16 @@ import pyarrow.parquet as pq
 import torch
 from torch.nn.utils.parametrize import cached
 
-from data import history_mainboard_eligibility, load_bars, read_dates
-from features import encode_windows, find_signal_coords, find_targets
-from score_economics import (
+from intraday_tcn.data import history_mainboard_eligibility, load_bars, read_dates
+from intraday_tcn.evaluation.scores import (
     SAMPLE_EVERY,
     _date_range,
     _execution_returns,
     _score_parameters,
 )
-from train import ROOT, encode, fit_stock_head, sample_training_rows
+from intraday_tcn.features import encode_windows, find_signal_coords, find_targets
+from intraday_tcn.paths import DEFAULT_PROVIDER, DEFAULT_RUN
+from intraday_tcn.training.train import encode, fit_stock_head, sample_training_rows
 
 FIT_DAYS = 140
 CALIBRATION_DAYS = 30
@@ -119,11 +120,11 @@ def _period(dates: list[date]) -> dict:
     return {"start": dates[0].isoformat(), "end": dates[-1].isoformat(), "days": len(dates)}
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--run-dir", type=Path, default=ROOT / "output/tcn_mainboard_joint_01")
-    parser.add_argument("--provider", type=Path, default=ROOT / "data/qlib_cn_1min")
-    args = parser.parse_args()
+    parser.add_argument("--run-dir", type=Path, default=DEFAULT_RUN)
+    parser.add_argument("--provider", type=Path, default=DEFAULT_PROVIDER)
+    args = parser.parse_args(argv)
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
     pa.set_cpu_count(1)

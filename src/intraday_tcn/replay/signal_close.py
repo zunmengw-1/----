@@ -13,9 +13,10 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from data import BAR_FIELDS, load_bars, read_dates
-from evaluate_cost_gate import RETURN_COLUMN, fit_return_buckets
-from evaluate_costs import HORIZON, ROOT, SLOTS
+from intraday_tcn.data import BAR_FIELDS, load_bars, read_dates
+from intraday_tcn.paths import DEFAULT_PROVIDER, DEFAULT_RUN
+from intraday_tcn.replay.cost_gate import RETURN_COLUMN, fit_return_buckets
+from intraday_tcn.replay.execution import HORIZON, SLOTS
 
 CALIBRATION_START = date(2025, 8, 1)
 CALIBRATION_END = date(2025, 9, 11)
@@ -100,11 +101,11 @@ def calibrate_signal_close(calibration: pd.DataFrame, provider: Path) -> pd.Data
     return updated
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--run-dir", type=Path, default=ROOT / "output/tcn_mainboard_joint_01")
-    parser.add_argument("--provider", type=Path, default=ROOT / "data/qlib_cn_1min")
-    args = parser.parse_args()
+    parser.add_argument("--run-dir", type=Path, default=DEFAULT_RUN)
+    parser.add_argument("--provider", type=Path, default=DEFAULT_PROVIDER)
+    args = parser.parse_args(argv)
     pa.set_cpu_count(1)
     pa.set_io_thread_count(1)
     provider = args.provider.resolve()
