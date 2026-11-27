@@ -17,3 +17,6 @@ output/
 build/
 dist/
 *.egg-info/
+
+# 上级仓库忽略行情数据。此处允许提交行情读取源码。
+!/src/data/

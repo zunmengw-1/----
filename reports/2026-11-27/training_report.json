@@ -1,0 +1,135 @@
+{
+  "device": "mps",
+  "torch_version": "2.14.0",
+  "torch_threads": 4,
+  "reference_model": "/private/tmp/tcn-clock-exclusive-20261127/gate/model.pt",
+  "gate_sha256": "0f9bb3f2cd3302effe1de326c3d38819d3cb9393ab4867b91ebb4cd34cbfa980",
+  "gate_trainable_parameters": 5825,
+  "trainable_parameters": {
+    "mlp24": 5809,
+    "linear": 241
+  },
+  "initial_named_parameters_sha256": {
+    "mlp24": "025b5533ae9ab6134fb9ca8829e96a6c1b1189661513625556ac624572fc5b54",
+    "linear": "98a9da144850060f587c5d6a04604b4355996dc783f0387689a99d379b7e7369"
+  },
+  "weight_file_sha256": {
+    "mlp24": "b647cb6755e3eabaf3a3550846bd55bab20e3cd3c26b56795453cf20a92e6bd4",
+    "linear": "24d2b2f09a2c1fd868f6684bc955963c165048500b4bb8acfd6654bd560626b4"
+  },
+  "seed": 20261126,
+  "input": "30 positions; channel-major OHLCVA and two per-bar clocks, flattened to 240",
+  "initialization": "Xavier uniform per dense layer, zero biases, reseed each model independently",
+  "structure": {
+    "mlp24": "240 -> 24 -> LeakyReLU(0.01) -> 1",
+    "linear": "240 -> 1"
+  },
+  "training": {
+    "batches": 5000,
+    "samples": 9759378,
+    "candidates_prepared": 10022724,
+    "labels_available_prepared": 9775870,
+    "training_sha256": "0cedb74d33397e546f2b31f916d8c399d1ded23e8b84f83912f3b2f8910899a8",
+    "per_500_batches_huber": [
+      {
+        "end_batch": 500,
+        "samples": 973129,
+        "mlp24": 0.3383768735825233,
+        "linear": 0.3487341210882433
+      },
+      {
+        "end_batch": 1000,
+        "samples": 971502,
+        "mlp24": 0.3316736172278557,
+        "linear": 0.33389707190687395
+      },
+      {
+        "end_batch": 1500,
+        "samples": 970048,
+        "mlp24": 0.3361522653991756,
+        "linear": 0.3377394574449354
+      },
+      {
+        "end_batch": 2000,
+        "samples": 983850,
+        "mlp24": 0.33462201650174206,
+        "linear": 0.3358216536017661
+      },
+      {
+        "end_batch": 2500,
+        "samples": 978463,
+        "mlp24": 0.33330731877001507,
+        "linear": 0.33447918384882297
+      },
+      {
+        "end_batch": 3000,
+        "samples": 981282,
+        "mlp24": 0.33087463797613936,
+        "linear": 0.3319496480548282
+      },
+      {
+        "end_batch": 3500,
+        "samples": 971262,
+        "mlp24": 0.3247435096981853,
+        "linear": 0.3264284640779394
+      },
+      {
+        "end_batch": 4000,
+        "samples": 972705,
+        "mlp24": 0.32778212473801155,
+        "linear": 0.32883895415316367
+      },
+      {
+        "end_batch": 4500,
+        "samples": 980391,
+        "mlp24": 0.3293760474944133,
+        "linear": 0.3302668488880827
+      },
+      {
+        "end_batch": 5000,
+        "samples": 976746,
+        "mlp24": 0.33272940132215756,
+        "linear": 0.33393232153685226
+      }
+    ],
+    "train_mean_huber": {
+      "mlp24": 0.33196517309695384,
+      "linear": 0.33420642815038987
+    },
+    "batch_size": 2048,
+    "stock_days_per_group": 128,
+    "source_index_sha256": "24becc756b0bf5ee69d97db06fa5b9814fa46422d002253a3500070c4f890766",
+    "metadata_sha256": "477707a4ff29437e7080c26591051cc0e170ac45f2134d7c49e77691b859445b",
+    "gate_batch_order_hash_matched": true,
+    "elapsed_seconds": 73.15287470899057
+  },
+  "optimization": {
+    "algorithm": "AdamW",
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "delta": 1.0,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "schedule": "constant",
+    "normalized_training_error": "prediction / minute_scale - y / minute_scale"
+  },
+  "label": "next_open_to_t_plus_5_close",
+  "frozen_tables_sha256": {
+    "position_means": "f463fdb83c04dee06f5711db955752b731571b52f807c1fc29ee7456db9aa410",
+    "minute_price_multipliers": "545a07fa5c95fe791697504967f773dd7cb34e005b588841180a99964a516c44",
+    "minute_return_scales": "7d84dc230c904181f3b9370c54b035b4e17cbe1f78ec2acbc296f8b6d4f23ac2",
+    "return_scale": "5f8f76f5a4dbe1d5ba1fa761f1f4d008b7c5de3a426d7b81809efd8028281111",
+    "clock_rows": "8cdc3e6d6210cc50a7f6d2313490f299c43b5d42c08a4595f815132c81dd2118",
+    "window_clock": "cb1f963b846a35fb23719c37dfa4ead4d1aef0d62f9d3fa54890d86119d483e2"
+  },
+  "checks": {
+    "strict_reload_128_mps_predictions_bitwise_equal": true,
+    "all_gate_tables_identical": true,
+    "independent_position_and_price_npz_equal": true,
+    "real_batch_128_gate_market_and_clocks_equal": true,
+    "training_only_no_validation_monitor_or_tuning": true
+  }
+}

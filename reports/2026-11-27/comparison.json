@@ -1,0 +1,4081 @@
+{
+  "plan": {
+    "comparison": "TCN minus each comparator daily mean IC and count of positive days. Descriptive uncertainty around daily mean difference via circular moving blocks of five observations, 10,000 replications, RNG 20261127. 67 dates include gaps and have already been inspected, not a fresh forward test. Assessment chiefly on Rank IC; no pretense of portfolio performance.",
+    "evidence": "Ablation for architectural added value. A single training seed and a previously examined 2025H1 validation panel. No selection or fitting on these outcomes. No 2025H2.",
+    "evaluation_dates": [
+      "2025-03-18",
+      "2025-03-19",
+      "2025-03-20",
+      "2025-03-21",
+      "2025-03-24",
+      "2025-03-25",
+      "2025-03-26",
+      "2025-03-27",
+      "2025-03-28",
+      "2025-03-31",
+      "2025-04-01",
+      "2025-04-02",
+      "2025-04-03",
+      "2025-04-07",
+      "2025-04-08",
+      "2025-04-09",
+      "2025-04-10",
+      "2025-04-11",
+      "2025-04-14",
+      "2025-04-15",
+      "2025-04-16",
+      "2025-04-17",
+      "2025-04-21",
+      "2025-04-22",
+      "2025-04-23",
+      "2025-04-24",
+      "2025-04-25",
+      "2025-04-28",
+      "2025-04-29",
+      "2025-04-30",
+      "2025-05-06",
+      "2025-05-07",
+      "2025-05-08",
+      "2025-05-09",
+      "2025-05-12",
+      "2025-05-13",
+      "2025-05-14",
+      "2025-05-15",
+      "2025-05-16",
+      "2025-05-19",
+      "2025-05-20",
+      "2025-05-21",
+      "2025-05-22",
+      "2025-05-23",
+      "2025-05-27",
+      "2025-05-28",
+      "2025-05-29",
+      "2025-05-30",
+      "2025-06-03",
+      "2025-06-04",
+      "2025-06-05",
+      "2025-06-06",
+      "2025-06-09",
+      "2025-06-10",
+      "2025-06-11",
+      "2025-06-12",
+      "2025-06-13",
+      "2025-06-16",
+      "2025-06-17",
+      "2025-06-18",
+      "2025-06-19",
+      "2025-06-20",
+      "2025-06-23",
+      "2025-06-24",
+      "2025-06-25",
+      "2025-06-26",
+      "2025-06-27"
+    ],
+    "panel_sha256": "490a8dd3f714980c99d8dc6bb8f11be870cef1b8a3f5c773f1c9ffd1c53d875e",
+    "gate16_sha256": "0f9bb3f2cd3302effe1de326c3d38819d3cb9393ab4867b91ebb4cd34cbfa980",
+    "training": "5,000 identical ordered training batches, 2023-2024, seed 20261126, PyTorch AdamW lr .001 wd .0001 and Huber delta 1 on train-only minute-scaled log return. Inputs from identical 30 bars with six prices/volume fields and two known clocks. Fit flat linear 240->1 and flat MLP 240->24->1 with LeakyReLU. Same normalization tables as existing Gate16.",
+    "primary_metric": "Cross-sectional Spearman for same valid rows each minute, average ties. Common nonconstant minutes, minimum 20; equal minute within day then equal day.",
+    "secondary_metric": "Within-stock Spearman across same valid timestamps, minimum 20 nonconstant, equal stock within day and equal day. Pooled sample-weighted Huber(delta=1) using train minute scale for log-return predictions only; include constant zero loss. Reversal score is for ranking only.",
+    "selection_check": "Complementary equal-capacity selection: each minute take top floor(1% of all candidates) per score with code tie-break ascending; keys selected before lookahead, independent 5-minute per-name lock within each arm; reentry at t+5. No TCN prediction threshold or future filter. Compare realized pooled and day-weighted mean simple gross return from next open to fifth close; hypothetical 10 bp round-trip scenario. These signal averages are not capital-weighted portfolio returns.",
+    "arms": [
+      "past_five_minute_reversal",
+      "flat_linear_huber",
+      "flat_mlp24_huber",
+      "frozen_clock_gate16_tcn"
+    ],
+    "validation_huber": "Official cross-run validation Huber uses the fixed common train-wide return_scale 0.0030267951862079545. Report this separately from the training-objective minute-scale Huber for all predictive arms and zero. The cross-sectional Rank IC comparison is unchanged."
+  },
+  "overall": {
+    "dates": 67,
+    "candidates": 33362162,
+    "valid": 32834005,
+    "cs_minute_count": 11323,
+    "ts_stock_count": 201308,
+    "cross_section_ic": {
+      "reversal": 0.059978449386031266,
+      "linear": 0.0648096376621962,
+      "mlp": 0.07890075685734199,
+      "tcn": 0.07632522721154121
+    },
+    "cross_section_ic_tcn_comparison": {
+      "reversal": {
+        "mean_tcn_minus_comparator": 0.01634677782550996,
+        "wins": 62,
+        "ties": 0,
+        "paired_date_block95": [
+          0.012991764665267181,
+          0.019027011920385528
+        ]
+      },
+      "linear": {
+        "mean_tcn_minus_comparator": 0.01151558954934502,
+        "wins": 59,
+        "ties": 0,
+        "paired_date_block95": [
+          0.00866177129007211,
+          0.014432821595385167
+        ]
+      },
+      "mlp": {
+        "mean_tcn_minus_comparator": -0.002575529645800767,
+        "wins": 25,
+        "ties": 0,
+        "paired_date_block95": [
+          -0.004412933990206444,
+          -0.0008554616517654533
+        ]
+      }
+    },
+    "within_stock_ic": {
+      "reversal": 0.057174716170193256,
+      "linear": 0.07349727973266561,
+      "mlp": 0.07507950448487904,
+      "tcn": 0.07211089313536868
+    },
+    "within_stock_ic_tcn_comparison": {
+      "reversal": {
+        "mean_tcn_minus_comparator": 0.014936176965175426,
+        "wins": 51,
+        "ties": 0,
+        "paired_date_block95": [
+          0.010458167239476995,
+          0.019446827924076118
+        ]
+      },
+      "linear": {
+        "mean_tcn_minus_comparator": -0.0013863865972969325,
+        "wins": 31,
+        "ties": 0,
+        "paired_date_block95": [
+          -0.007002628885188974,
+          0.004482258261895571
+        ]
+      },
+      "mlp": {
+        "mean_tcn_minus_comparator": -0.0029686113495103602,
+        "wins": 30,
+        "ties": 0,
+        "paired_date_block95": [
+          -0.007473625541326355,
+          0.0014962385042473461
+        ]
+      }
+    },
+    "huber": {
+      "zero": 0.29568112818907877,
+      "linear": 0.29618656837052465,
+      "mlp": 0.2946467935577845,
+      "tcn": 0.2945842899646408
+    },
+    "top_one_percent": {
+      "reversal": {
+        "n_selected": 327518,
+        "valid": 324558,
+        "pooled_gross_bp": 3.6667549884276958,
+        "pooled_minus_10bp": -6.333245011572304,
+        "equal_date_gross_bp": 3.723879124636716
+      },
+      "linear": {
+        "n_selected": 327518,
+        "valid": 322454,
+        "pooled_gross_bp": 4.074584095021914,
+        "pooled_minus_10bp": -5.925415904978086,
+        "equal_date_gross_bp": 4.092910998370272
+      },
+      "mlp": {
+        "n_selected": 327518,
+        "valid": 322952,
+        "pooled_gross_bp": 4.435010633243577,
+        "pooled_minus_10bp": -5.564989366756423,
+        "equal_date_gross_bp": 4.459230373224033
+      },
+      "tcn": {
+        "n_selected": 327518,
+        "valid": 324619,
+        "pooled_gross_bp": 4.293868412336524,
+        "pooled_minus_10bp": -5.706131587663476,
+        "equal_date_gross_bp": 4.311838438305838
+      }
+    },
+    "huber_fixed_global_scale": {
+      "mlp": 0.29609049480337024,
+      "linear": 0.2975220647921002,
+      "tcn": 0.2960394803107038,
+      "zero": 0.2971491001006435
+    }
+  },
+  "monthly": {
+    "2025-03": {
+      "dates": 10,
+      "candidates": 5067694,
+      "valid": 4999003,
+      "cs_minute_count": 1690,
+      "ts_stock_count": 30399,
+      "cross_section_ic": {
+        "reversal": 0.06301889739021213,
+        "linear": 0.05676949537597006,
+        "mlp": 0.07620546904138807,
+        "tcn": 0.07574873272831828
+      },
+      "cross_section_ic_tcn_comparison": {
+        "reversal": {
+          "mean_tcn_minus_comparator": 0.012729835338106135,
+          "wins": 8,
+          "ties": 0,
+          "paired_date_block95": [
+            0.00902428070342608,
+            0.01643538997278619
+          ]
+        },
+        "linear": {
+          "mean_tcn_minus_comparator": 0.018979237352348213,
+          "wins": 10,
+          "ties": 0,
+          "paired_date_block95": [
+            0.013141541544556545,
+            0.02481693316013988
+          ]
+        },
+        "mlp": {
+          "mean_tcn_minus_comparator": -0.00045673631306979054,
+          "wins": 4,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.005070893898459414,
+            0.004157421272319833
+          ]
+        }
+      },
+      "within_stock_ic": {
+        "reversal": 0.04922117311650749,
+        "linear": 0.05759077024988167,
+        "mlp": 0.06690898505167535,
+        "tcn": 0.058725731541149094
+      },
+      "within_stock_ic_tcn_comparison": {
+        "reversal": {
+          "mean_tcn_minus_comparator": 0.009504558424641598,
+          "wins": 7,
+          "ties": 0,
+          "paired_date_block95": [
+            0.00623171718288257,
+            0.012777399666400627
+          ]
+        },
+        "linear": {
+          "mean_tcn_minus_comparator": 0.0011349612912674078,
+          "wins": 5,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.0042225450116749885,
+            0.006492467594209804
+          ]
+        },
+        "mlp": {
+          "mean_tcn_minus_comparator": -0.008183253510526256,
+          "wins": 4,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.015365644018102175,
+            -0.0010008630029503369
+          ]
+        }
+      },
+      "huber": {
+        "zero": 0.32605401197170686,
+        "linear": 0.32822957324560875,
+        "mlp": 0.3255144497810029,
+        "tcn": 0.32499514821213227
+      },
+      "top_one_percent": {
+        "reversal": {
+          "n_selected": 49923,
+          "valid": 49551,
+          "pooled_gross_bp": 2.9803630766964213,
+          "pooled_minus_10bp": -7.019636923303579,
+          "equal_date_gross_bp": 2.979419630872521
+        },
+        "linear": {
+          "n_selected": 49923,
+          "valid": 49286,
+          "pooled_gross_bp": 3.135602589767474,
+          "pooled_minus_10bp": -6.864397410232526,
+          "equal_date_gross_bp": 3.135130730230805
+        },
+        "mlp": {
+          "n_selected": 49923,
+          "valid": 49343,
+          "pooled_gross_bp": 3.640431842069946,
+          "pooled_minus_10bp": -6.359568157930054,
+          "equal_date_gross_bp": 3.641696394668913
+        },
+        "tcn": {
+          "n_selected": 49923,
+          "valid": 49543,
+          "pooled_gross_bp": 3.3666667311078355,
+          "pooled_minus_10bp": -6.633333268892164,
+          "equal_date_gross_bp": 3.368773218590493
+        }
+      }
+    },
+    "2025-04": {
+      "dates": 20,
+      "candidates": 9771379,
+      "valid": 9607635,
+      "cs_minute_count": 3380,
+      "ts_stock_count": 59750,
+      "cross_section_ic": {
+        "reversal": 0.06075874773321234,
+        "linear": 0.06624165974569893,
+        "mlp": 0.07830661383226047,
+        "tcn": 0.07349377017051281
+      },
+      "cross_section_ic_tcn_comparison": {
+        "reversal": {
+          "mean_tcn_minus_comparator": 0.012735022437300464,
+          "wins": 17,
+          "ties": 0,
+          "paired_date_block95": [
+            0.004350537831661472,
+            0.018985379574835554
+          ]
+        },
+        "linear": {
+          "mean_tcn_minus_comparator": 0.007252110424813883,
+          "wins": 15,
+          "ties": 0,
+          "paired_date_block95": [
+            0.0022882245632117565,
+            0.011369354557032633
+          ]
+        },
+        "mlp": {
+          "mean_tcn_minus_comparator": -0.0048128436617476565,
+          "wins": 7,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.008697888566308236,
+            -0.0015043797176439292
+          ]
+        }
+      },
+      "within_stock_ic": {
+        "reversal": 0.052822205512996136,
+        "linear": 0.06730467968240869,
+        "mlp": 0.059417926131342925,
+        "tcn": 0.06293540592164842
+      },
+      "within_stock_ic_tcn_comparison": {
+        "reversal": {
+          "mean_tcn_minus_comparator": 0.01011320040865229,
+          "wins": 13,
+          "ties": 0,
+          "paired_date_block95": [
+            0.00281333683388477,
+            0.01727354443585089
+          ]
+        },
+        "linear": {
+          "mean_tcn_minus_comparator": -0.00436927376076026,
+          "wins": 9,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.01266362718121523,
+            0.004862972919217854
+          ]
+        },
+        "mlp": {
+          "mean_tcn_minus_comparator": 0.0035174797903055137,
+          "wins": 11,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.0022643014892895622,
+            0.009342389421582794
+          ]
+        }
+      },
+      "huber": {
+        "zero": 0.3642008677803751,
+        "linear": 0.36532573744506663,
+        "mlp": 0.3639281118325942,
+        "tcn": 0.3641819879442204
+      },
+      "top_one_percent": {
+        "reversal": {
+          "n_selected": 96008,
+          "valid": 94877,
+          "pooled_gross_bp": 4.965726021349082,
+          "pooled_minus_10bp": -5.034273978650918,
+          "equal_date_gross_bp": 5.116433088093526
+        },
+        "linear": {
+          "n_selected": 96008,
+          "valid": 94286,
+          "pooled_gross_bp": 5.09942680757603,
+          "pooled_minus_10bp": -4.90057319242397,
+          "equal_date_gross_bp": 5.125160615634578
+        },
+        "mlp": {
+          "n_selected": 96008,
+          "valid": 94494,
+          "pooled_gross_bp": 5.351839864207307,
+          "pooled_minus_10bp": -4.648160135792693,
+          "equal_date_gross_bp": 5.402488999587031
+        },
+        "tcn": {
+          "n_selected": 96008,
+          "valid": 95011,
+          "pooled_gross_bp": 5.1554500988171315,
+          "pooled_minus_10bp": -4.8445499011828685,
+          "equal_date_gross_bp": 5.182812623973022
+        }
+      }
+    },
+    "2025-05": {
+      "dates": 18,
+      "candidates": 8989670,
+      "valid": 8846059,
+      "cs_minute_count": 3042,
+      "ts_stock_count": 53951,
+      "cross_section_ic": {
+        "reversal": 0.05705512745970324,
+        "linear": 0.06312442421396736,
+        "mlp": 0.07668182499967577,
+        "tcn": 0.07578415168910807
+      },
+      "cross_section_ic_tcn_comparison": {
+        "reversal": {
+          "mean_tcn_minus_comparator": 0.018729024229404832,
+          "wins": 18,
+          "ties": 0,
+          "paired_date_block95": [
+            0.01632302177692837,
+            0.020915890023545845
+          ]
+        },
+        "linear": {
+          "mean_tcn_minus_comparator": 0.012659727475140726,
+          "wins": 17,
+          "ties": 0,
+          "paired_date_block95": [
+            0.01047965377797291,
+            0.01500851964775843
+          ]
+        },
+        "mlp": {
+          "mean_tcn_minus_comparator": -0.0008976733105676994,
+          "wins": 8,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.0029547337149588297,
+            0.0010866023866310409
+          ]
+        }
+      },
+      "within_stock_ic": {
+        "reversal": 0.05706487924856028,
+        "linear": 0.08144314944389824,
+        "mlp": 0.08412040676491277,
+        "tcn": 0.08010069148131098
+      },
+      "within_stock_ic_tcn_comparison": {
+        "reversal": {
+          "mean_tcn_minus_comparator": 0.023035812232750672,
+          "wins": 15,
+          "ties": 0,
+          "paired_date_block95": [
+            0.01541374621655246,
+            0.030373169272564133
+          ]
+        },
+        "linear": {
+          "mean_tcn_minus_comparator": -0.0013424579625872686,
+          "wins": 6,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.016482759552171183,
+            0.01600275073672082
+          ]
+        },
+        "mlp": {
+          "mean_tcn_minus_comparator": -0.004019715283601798,
+          "wins": 7,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.012160062027331813,
+            0.004369667513249872
+          ]
+        }
+      },
+      "huber": {
+        "zero": 0.2563331555567438,
+        "linear": 0.25612548899661847,
+        "mlp": 0.25482436267303443,
+        "tcn": 0.25465140305808037
+      },
+      "top_one_percent": {
+        "reversal": {
+          "n_selected": 88159,
+          "valid": 87439,
+          "pooled_gross_bp": 3.0942344117364002,
+          "pooled_minus_10bp": -6.9057655882636,
+          "equal_date_gross_bp": 3.0948045329078857
+        },
+        "linear": {
+          "n_selected": 88159,
+          "valid": 86809,
+          "pooled_gross_bp": 3.5026146409796133,
+          "pooled_minus_10bp": -6.497385359020386,
+          "equal_date_gross_bp": 3.503572838832182
+        },
+        "mlp": {
+          "n_selected": 88159,
+          "valid": 86885,
+          "pooled_gross_bp": 3.9624465795590287,
+          "pooled_minus_10bp": -6.037553420440972,
+          "equal_date_gross_bp": 3.9623845306784253
+        },
+        "tcn": {
+          "n_selected": 88159,
+          "valid": 87383,
+          "pooled_gross_bp": 3.9574937383670967,
+          "pooled_minus_10bp": -6.042506261632903,
+          "equal_date_gross_bp": 3.9586205986427623
+        }
+      }
+    },
+    "2025-06": {
+      "dates": 19,
+      "candidates": 9533419,
+      "valid": 9381308,
+      "cs_minute_count": 3211,
+      "ts_stock_count": 57208,
+      "cross_section_ic": {
+        "reversal": 0.06032630979068778,
+        "linear": 0.06913041783379233,
+        "mlp": 0.08304688907308734,
+        "tcn": 0.08012172431978304
+      },
+      "cross_section_ic_tcn_comparison": {
+        "reversal": {
+          "mean_tcn_minus_comparator": 0.019795414529095244,
+          "wins": 19,
+          "ties": 0,
+          "paired_date_block95": [
+            0.017931037888802435,
+            0.021691092868937886
+          ]
+        },
+        "linear": {
+          "mean_tcn_minus_comparator": 0.010991306485990704,
+          "wins": 17,
+          "ties": 0,
+          "paired_date_block95": [
+            0.008388015358923593,
+            0.013625073872987994
+          ]
+        },
+        "mlp": {
+          "mean_tcn_minus_comparator": -0.0029251647533043027,
+          "wins": 6,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.00457237796924398,
+            -0.0013407071944307515
+          ]
+        }
+      },
+      "within_stock_ic": {
+        "reversal": 0.06604643765809814,
+        "linear": 0.08085998715533879,
+        "mlp": 0.08730058450393968,
+        "tcn": 0.08124483997692866
+      },
+      "within_stock_ic_tcn_comparison": {
+        "reversal": {
+          "mean_tcn_minus_comparator": 0.015198402318830514,
+          "wins": 16,
+          "ties": 0,
+          "paired_date_block95": [
+            0.00823124276873849,
+            0.022040009546956774
+          ]
+        },
+        "linear": {
+          "mean_tcn_minus_comparator": 0.000384852821589868,
+          "wins": 11,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.006314534896574243,
+            0.006115309132479918
+          ]
+        },
+        "mlp": {
+          "mean_tcn_minus_comparator": -0.0060557445270110226,
+          "wins": 8,
+          "ties": 0,
+          "paired_date_block95": [
+            -0.01294651742740303,
+            0.0011434346374752076
+          ]
+        }
+      },
+      "huber": {
+        "zero": 0.24642655750445658,
+        "linear": 0.24608008999610287,
+        "mlp": 0.24479601035824375,
+        "tcn": 0.24475706149883825
+      },
+      "top_one_percent": {
+        "reversal": {
+          "n_selected": 93428,
+          "valid": 92691,
+          "pooled_gross_bp": 3.244163341266959,
+          "pooled_minus_10bp": -6.755836658733041,
+          "equal_date_gross_bp": 3.24581903619591
+        },
+        "linear": {
+          "n_selected": 93428,
+          "valid": 92073,
+          "pooled_gross_bp": 4.067007702464387,
+          "pooled_minus_10bp": -5.932992297535613,
+          "equal_date_gross_bp": 4.068747693517331
+        },
+        "mlp": {
+          "n_selected": 93428,
+          "valid": 92230,
+          "pooled_gross_bp": 4.365952493230303,
+          "pooled_minus_10bp": -5.634047506769697,
+          "equal_date_gross_bp": 4.367303658703615
+        },
+        "tcn": {
+          "n_selected": 93428,
+          "valid": 92682,
+          "pooled_gross_bp": 4.223412913041886,
+          "pooled_minus_10bp": -5.776587086958114,
+          "equal_date_gross_bp": 4.2260010487134725
+        }
+      }
+    }
+  },
+  "daily": [
+    {
+      "day": "2025-03-18",
+      "candidates": 506941,
+      "valid": 498242,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3043,
+      "cross_section_ic": {
+        "reversal": 0.05870424786159954,
+        "linear": 0.06308323619835471,
+        "mlp": 0.08126252401315578,
+        "tcn": 0.0828716280972382
+      },
+      "within_stock_ic": {
+        "reversal": 0.0854899520255547,
+        "linear": 0.09703702376806082,
+        "mlp": 0.12590702276473972,
+        "tcn": 0.10633075374916315
+      },
+      "huber_sum": {
+        "zero": 126700.08046244462,
+        "linear": 126066.64671452093,
+        "mlp": 125650.76136019338,
+        "tcn": 125780.42181459333
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4993,
+          "valid": 4955,
+          "gross_sum_bp": 15301.962318713988,
+          "daily_mean_gross_bp": 3.0881861389937413
+        },
+        "tcn": {
+          "selected": 4993,
+          "valid": 4960,
+          "gross_sum_bp": 20682.28489760257,
+          "daily_mean_gross_bp": 4.1698155035489055
+        },
+        "linear": {
+          "selected": 4993,
+          "valid": 4929,
+          "gross_sum_bp": 19215.390283870125,
+          "daily_mean_gross_bp": 3.89843584578416
+        },
+        "mlp": {
+          "selected": 4993,
+          "valid": 4941,
+          "gross_sum_bp": 18991.819408148218,
+          "daily_mean_gross_bp": 3.843719774974341
+        }
+      }
+    },
+    {
+      "day": "2025-03-19",
+      "candidates": 507410,
+      "valid": 499282,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3042,
+      "cross_section_ic": {
+        "reversal": 0.07818684675948237,
+        "linear": 0.08183374295877956,
+        "mlp": 0.09878224354031506,
+        "tcn": 0.08725215612863875
+      },
+      "within_stock_ic": {
+        "reversal": 0.09241043598112787,
+        "linear": 0.12815554952901073,
+        "mlp": 0.11706676978763932,
+        "tcn": 0.0934047667117959
+      },
+      "huber_sum": {
+        "zero": 130518.46617609427,
+        "linear": 129110.312678074,
+        "mlp": 129212.06548721448,
+        "tcn": 129438.13774459582
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 5002,
+          "valid": 4958,
+          "gross_sum_bp": 20819.18686801783,
+          "daily_mean_gross_bp": 4.199109896736149
+        },
+        "tcn": {
+          "selected": 5002,
+          "valid": 4956,
+          "gross_sum_bp": 31223.930389433448,
+          "daily_mean_gross_bp": 6.300228085034997
+        },
+        "linear": {
+          "selected": 5002,
+          "valid": 4934,
+          "gross_sum_bp": 25990.15319133099,
+          "daily_mean_gross_bp": 5.267562462774825
+        },
+        "mlp": {
+          "selected": 5002,
+          "valid": 4932,
+          "gross_sum_bp": 31007.89037506716,
+          "daily_mean_gross_bp": 6.287082395593504
+        }
+      }
+    },
+    {
+      "day": "2025-03-20",
+      "candidates": 506026,
+      "valid": 498744,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3038,
+      "cross_section_ic": {
+        "reversal": 0.085284449617556,
+        "linear": 0.06278205626338948,
+        "mlp": 0.08997558110777376,
+        "tcn": 0.08732331411794783
+      },
+      "within_stock_ic": {
+        "reversal": 0.12985106514075606,
+        "linear": 0.1291144656579711,
+        "mlp": 0.1499412700002199,
+        "tcn": 0.12101584258985217
+      },
+      "huber_sum": {
+        "zero": 141048.9535700109,
+        "linear": 139936.9740804982,
+        "mlp": 139567.066932844,
+        "tcn": 139796.239971631
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4980,
+          "valid": 4948,
+          "gross_sum_bp": 20890.573074377946,
+          "daily_mean_gross_bp": 4.222023660949463
+        },
+        "tcn": {
+          "selected": 4980,
+          "valid": 4946,
+          "gross_sum_bp": 20459.846807126116,
+          "daily_mean_gross_bp": 4.136645128816441
+        },
+        "linear": {
+          "selected": 4980,
+          "valid": 4922,
+          "gross_sum_bp": 20599.323962927054,
+          "daily_mean_gross_bp": 4.18515318222817
+        },
+        "mlp": {
+          "selected": 4980,
+          "valid": 4920,
+          "gross_sum_bp": 24446.053592694287,
+          "daily_mean_gross_bp": 4.968710079815912
+        }
+      }
+    },
+    {
+      "day": "2025-03-21",
+      "candidates": 508705,
+      "valid": 504509,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3041,
+      "cross_section_ic": {
+        "reversal": 0.07346797427856723,
+        "linear": 0.07420539085327661,
+        "mlp": 0.10585855840346223,
+        "tcn": 0.09769832455760283
+      },
+      "within_stock_ic": {
+        "reversal": 0.08100202958202918,
+        "linear": 0.05160957243303819,
+        "mlp": 0.09604401007936822,
+        "tcn": 0.08982830227747221
+      },
+      "huber_sum": {
+        "zero": 179687.9475093271,
+        "linear": 179763.983761114,
+        "mlp": 177257.565372293,
+        "tcn": 177131.16645773945
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 5040,
+          "valid": 5022,
+          "gross_sum_bp": 13288.182777208767,
+          "daily_mean_gross_bp": 2.645994181045155
+        },
+        "tcn": {
+          "selected": 5040,
+          "valid": 5030,
+          "gross_sum_bp": 15055.315313161871,
+          "daily_mean_gross_bp": 2.9931044360162766
+        },
+        "linear": {
+          "selected": 5040,
+          "valid": 5001,
+          "gross_sum_bp": 11206.230633058989,
+          "daily_mean_gross_bp": 2.240797967018394
+        },
+        "mlp": {
+          "selected": 5040,
+          "valid": 5009,
+          "gross_sum_bp": 19132.68825696397,
+          "daily_mean_gross_bp": 3.8196622593260074
+        }
+      }
+    },
+    {
+      "day": "2025-03-24",
+      "candidates": 506617,
+      "valid": 504544,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3034,
+      "cross_section_ic": {
+        "reversal": 0.03855200439666008,
+        "linear": 0.016101161113529213,
+        "mlp": 0.018132456739372287,
+        "tcn": 0.031923451018022214
+      },
+      "within_stock_ic": {
+        "reversal": -0.0688201887067844,
+        "linear": -0.04623834394355696,
+        "mlp": -0.07057812275956893,
+        "tcn": -0.05803429688655757
+      },
+      "huber_sum": {
+        "zero": 233539.5386305255,
+        "linear": 240953.30207415437,
+        "mlp": 236917.02494940828,
+        "tcn": 236844.5723490442
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4978,
+          "valid": 4971,
+          "gross_sum_bp": 22446.85377638026,
+          "daily_mean_gross_bp": 4.515561009129
+        },
+        "tcn": {
+          "selected": 4978,
+          "valid": 4971,
+          "gross_sum_bp": 15162.300926650652,
+          "daily_mean_gross_bp": 3.0501510614867535
+        },
+        "linear": {
+          "selected": 4978,
+          "valid": 4954,
+          "gross_sum_bp": 18542.092914113564,
+          "daily_mean_gross_bp": 3.7428528288481155
+        },
+        "mlp": {
+          "selected": 4978,
+          "valid": 4965,
+          "gross_sum_bp": 17299.58777189944,
+          "daily_mean_gross_bp": 3.4843077083382563
+        }
+      }
+    },
+    {
+      "day": "2025-03-25",
+      "candidates": 505483,
+      "valid": 497498,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3046,
+      "cross_section_ic": {
+        "reversal": 0.06415320924218618,
+        "linear": 0.04751860544296313,
+        "mlp": 0.07436467988188103,
+        "tcn": 0.09141460154314147
+      },
+      "within_stock_ic": {
+        "reversal": 0.07480537499986255,
+        "linear": 0.10773266792534886,
+        "mlp": 0.12713199214898074,
+        "tcn": 0.09668244976110761
+      },
+      "huber_sum": {
+        "zero": 175207.17697920123,
+        "linear": 174963.4780103368,
+        "mlp": 173670.80726628646,
+        "tcn": 173423.46411212877
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4963,
+          "valid": 4924,
+          "gross_sum_bp": 6076.10200301603,
+          "daily_mean_gross_bp": 1.2339768487034992
+        },
+        "tcn": {
+          "selected": 4963,
+          "valid": 4916,
+          "gross_sum_bp": 3264.53995287349,
+          "daily_mean_gross_bp": 0.6640642703160069
+        },
+        "linear": {
+          "selected": 4963,
+          "valid": 4881,
+          "gross_sum_bp": -2734.2278159910697,
+          "daily_mean_gross_bp": -0.5601777947123683
+        },
+        "mlp": {
+          "selected": 4963,
+          "valid": 4891,
+          "gross_sum_bp": 1026.4724574542915,
+          "daily_mean_gross_bp": 0.2098696498577574
+        }
+      }
+    },
+    {
+      "day": "2025-03-26",
+      "candidates": 506295,
+      "valid": 499552,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3031,
+      "cross_section_ic": {
+        "reversal": 0.08052292648453012,
+        "linear": 0.07518664317620073,
+        "mlp": 0.09765977953404503,
+        "tcn": 0.09460302019764934
+      },
+      "within_stock_ic": {
+        "reversal": 0.07317398514278642,
+        "linear": 0.104261087697363,
+        "mlp": 0.12133965814547229,
+        "tcn": 0.09945769951424828
+      },
+      "huber_sum": {
+        "zero": 136307.43664466648,
+        "linear": 135457.31945331907,
+        "mlp": 135162.95678641822,
+        "tcn": 135247.1947292931
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4973,
+          "valid": 4933,
+          "gross_sum_bp": 21732.654221837787,
+          "daily_mean_gross_bp": 4.405565421009079
+        },
+        "tcn": {
+          "selected": 4973,
+          "valid": 4927,
+          "gross_sum_bp": 30475.383319475557,
+          "daily_mean_gross_bp": 6.185383259483571
+        },
+        "linear": {
+          "selected": 4973,
+          "valid": 4913,
+          "gross_sum_bp": 27385.105520780686,
+          "daily_mean_gross_bp": 5.57400885829039
+        },
+        "mlp": {
+          "selected": 4973,
+          "valid": 4909,
+          "gross_sum_bp": 30691.530839625484,
+          "daily_mean_gross_bp": 6.25209428389193
+        }
+      }
+    },
+    {
+      "day": "2025-03-27",
+      "candidates": 504776,
+      "valid": 494581,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3040,
+      "cross_section_ic": {
+        "reversal": 0.056169487068849645,
+        "linear": 0.0668269910627659,
+        "mlp": 0.08845953374537452,
+        "tcn": 0.08519987134871405
+      },
+      "within_stock_ic": {
+        "reversal": 0.05476554057753656,
+        "linear": 0.023119454517074818,
+        "mlp": 0.022057793657830418,
+        "tcn": 0.03864849984427973
+      },
+      "huber_sum": {
+        "zero": 146796.69332853888,
+        "linear": 147791.75473902444,
+        "mlp": 146101.29845824488,
+        "tcn": 145759.9769882008
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4968,
+          "valid": 4912,
+          "gross_sum_bp": 8757.920243392884,
+          "daily_mean_gross_bp": 1.782964218931776
+        },
+        "tcn": {
+          "selected": 4968,
+          "valid": 4901,
+          "gross_sum_bp": 18456.36038549387,
+          "daily_mean_gross_bp": 3.7658356224227445
+        },
+        "linear": {
+          "selected": 4968,
+          "valid": 4864,
+          "gross_sum_bp": 16392.864775480048,
+          "daily_mean_gross_bp": 3.3702435804852073
+        },
+        "mlp": {
+          "selected": 4968,
+          "valid": 4873,
+          "gross_sum_bp": 20342.03710088846,
+          "daily_mean_gross_bp": 4.174438149166522
+        }
+      }
+    },
+    {
+      "day": "2025-03-28",
+      "candidates": 507970,
+      "valid": 500115,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3046,
+      "cross_section_ic": {
+        "reversal": 0.052922057378945,
+        "linear": 0.04853893153509991,
+        "mlp": 0.06548091024865445,
+        "tcn": 0.06555897299716922
+      },
+      "within_stock_ic": {
+        "reversal": 0.022862107912348453,
+        "linear": 0.008850084351079188,
+        "mlp": -0.008574454129971956,
+        "tcn": 0.009737565102454786
+      },
+      "huber_sum": {
+        "zero": 164755.9148235501,
+        "linear": 166385.7165203807,
+        "mlp": 165278.07684488234,
+        "tcn": 164312.16196346868
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 5010,
+          "valid": 4954,
+          "gross_sum_bp": 10234.455579389654,
+          "daily_mean_gross_bp": 2.0658973716975484
+        },
+        "tcn": {
+          "selected": 5010,
+          "valid": 4956,
+          "gross_sum_bp": 10173.4558579375,
+          "daily_mean_gross_bp": 2.052755419277139
+        },
+        "linear": {
+          "selected": 5010,
+          "valid": 4935,
+          "gross_sum_bp": 12900.05073430224,
+          "daily_mean_gross_bp": 2.6139920434249726
+        },
+        "mlp": {
+          "selected": 5010,
+          "valid": 4934,
+          "gross_sum_bp": 12540.843532433002,
+          "daily_mean_gross_bp": 2.5417194026009327
+        }
+      }
+    },
+    {
+      "day": "2025-03-31",
+      "candidates": 507471,
+      "valid": 501936,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3038,
+      "cross_section_ic": {
+        "reversal": 0.04222577081374525,
+        "linear": 0.031618195155341394,
+        "mlp": 0.04207842319984653,
+        "tcn": 0.03364198727705887
+      },
+      "within_stock_ic": {
+        "reversal": -0.05332857149014245,
+        "linear": -0.027733859436572902,
+        "mlp": -0.011246089177956227,
+        "tcn": -0.009814267252325337
+      },
+      "huber_sum": {
+        "zero": 195382.77588423964,
+        "linear": 200391.1333120954,
+        "mlp": 198430.08754079795,
+        "tcn": 196918.38476719882
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 5016,
+          "valid": 4974,
+          "gross_sum_bp": 8132.079951049211,
+          "daily_mean_gross_bp": 1.634917561529797
+        },
+        "tcn": {
+          "selected": 5016,
+          "valid": 4980,
+          "gross_sum_bp": 1841.3520095204167,
+          "daily_mean_gross_bp": 0.3697493995020917
+        },
+        "linear": {
+          "selected": 5016,
+          "valid": 4953,
+          "gross_sum_bp": 5044.325039407098,
+          "daily_mean_gross_bp": 1.0184383281661817
+        },
+        "mlp": {
+          "selected": 5016,
+          "valid": 4969,
+          "gross_sum_bp": 4150.905048083023,
+          "daily_mean_gross_bp": 0.8353602431239732
+        }
+      }
+    },
+    {
+      "day": "2025-04-01",
+      "candidates": 505933,
+      "valid": 496693,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3036,
+      "cross_section_ic": {
+        "reversal": 0.057237527042803105,
+        "linear": 0.0663112508797369,
+        "mlp": 0.08055283436430959,
+        "tcn": 0.07309792854053798
+      },
+      "within_stock_ic": {
+        "reversal": 0.05400619699246151,
+        "linear": 0.06846724957484428,
+        "mlp": 0.057320379938213706,
+        "tcn": 0.06479509358152583
+      },
+      "huber_sum": {
+        "zero": 129051.89797142881,
+        "linear": 128870.49894305234,
+        "mlp": 128636.30238599627,
+        "tcn": 128564.21552635601
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4987,
+          "valid": 4914,
+          "gross_sum_bp": 22742.71121994004,
+          "daily_mean_gross_bp": 4.628146361404159
+        },
+        "tcn": {
+          "selected": 4987,
+          "valid": 4917,
+          "gross_sum_bp": 33069.18359930459,
+          "daily_mean_gross_bp": 6.725479682591944
+        },
+        "linear": {
+          "selected": 4987,
+          "valid": 4892,
+          "gross_sum_bp": 26120.202336548602,
+          "daily_mean_gross_bp": 5.339370878280581
+        },
+        "mlp": {
+          "selected": 4987,
+          "valid": 4878,
+          "gross_sum_bp": 30152.12866191786,
+          "daily_mean_gross_bp": 6.181248188175044
+        }
+      }
+    },
+    {
+      "day": "2025-04-02",
+      "candidates": 505398,
+      "valid": 492468,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3050,
+      "cross_section_ic": {
+        "reversal": 0.0755958544990892,
+        "linear": 0.08209768393046889,
+        "mlp": 0.09984071479540142,
+        "tcn": 0.0893155487482628
+      },
+      "within_stock_ic": {
+        "reversal": 0.09248836761763175,
+        "linear": 0.1300001214456567,
+        "mlp": 0.127416520653785,
+        "tcn": 0.10779260756615083
+      },
+      "huber_sum": {
+        "zero": 121247.83154626898,
+        "linear": 119787.55380687342,
+        "mlp": 119832.66208587572,
+        "tcn": 119942.81307599143
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4982,
+          "valid": 4898,
+          "gross_sum_bp": 16003.013737699452,
+          "daily_mean_gross_bp": 3.2672547443241022
+        },
+        "tcn": {
+          "selected": 4982,
+          "valid": 4900,
+          "gross_sum_bp": 15405.841594850397,
+          "daily_mean_gross_bp": 3.1440493050715097
+        },
+        "linear": {
+          "selected": 4982,
+          "valid": 4826,
+          "gross_sum_bp": 14381.765610252463,
+          "daily_mean_gross_bp": 2.9800591815690973
+        },
+        "mlp": {
+          "selected": 4982,
+          "valid": 4846,
+          "gross_sum_bp": 19064.37635394667,
+          "daily_mean_gross_bp": 3.9340438204594865
+        }
+      }
+    },
+    {
+      "day": "2025-04-03",
+      "candidates": 504695,
+      "valid": 494821,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3045,
+      "cross_section_ic": {
+        "reversal": 0.05044307048585427,
+        "linear": 0.05077647911497752,
+        "mlp": 0.06052323507479911,
+        "tcn": 0.06732917989014581
+      },
+      "within_stock_ic": {
+        "reversal": 0.01111498249792481,
+        "linear": -0.08031110028069598,
+        "mlp": -0.04048373076204116,
+        "tcn": 0.004762592033925192
+      },
+      "huber_sum": {
+        "zero": 166926.25536525482,
+        "linear": 172209.22756213637,
+        "mlp": 168459.33799763385,
+        "tcn": 167487.9671998421
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4951,
+          "valid": 4873,
+          "gross_sum_bp": 8378.500824797462,
+          "daily_mean_gross_bp": 1.7193722193304868
+        },
+        "tcn": {
+          "selected": 4951,
+          "valid": 4890,
+          "gross_sum_bp": 6985.16824965327,
+          "daily_mean_gross_bp": 1.42845976475527
+        },
+        "linear": {
+          "selected": 4951,
+          "valid": 4868,
+          "gross_sum_bp": 7578.11139223673,
+          "daily_mean_gross_bp": 1.5567196779450967
+        },
+        "mlp": {
+          "selected": 4951,
+          "valid": 4870,
+          "gross_sum_bp": 3818.377047822787,
+          "daily_mean_gross_bp": 0.7840609954461575
+        }
+      }
+    },
+    {
+      "day": "2025-04-07",
+      "candidates": 243296,
+      "valid": 242279,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2318,
+      "cross_section_ic": {
+        "reversal": 0.05692106003608844,
+        "linear": 0.0637993993942494,
+        "mlp": 0.07098294726109382,
+        "tcn": 0.057292594763484986
+      },
+      "within_stock_ic": {
+        "reversal": -0.008201187524693721,
+        "linear": 0.0963283502723153,
+        "mlp": 0.025820704015709545,
+        "tcn": 0.01660034211553525
+      },
+      "huber_sum": {
+        "zero": 186560.1175807321,
+        "linear": 189312.25107572833,
+        "mlp": 189990.64801915397,
+        "tcn": 192020.47991417418
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 2353,
+          "valid": 2346,
+          "gross_sum_bp": 24288.840287721276,
+          "daily_mean_gross_bp": 10.353299355379914
+        },
+        "tcn": {
+          "selected": 2353,
+          "valid": 2349,
+          "gross_sum_bp": 13689.36259108315,
+          "daily_mean_gross_bp": 5.827740566659494
+        },
+        "linear": {
+          "selected": 2353,
+          "valid": 2340,
+          "gross_sum_bp": 13692.711807923275,
+          "daily_mean_gross_bp": 5.851586242702254
+        },
+        "mlp": {
+          "selected": 2353,
+          "valid": 2348,
+          "gross_sum_bp": 16557.08611723041,
+          "daily_mean_gross_bp": 7.0515698966057965
+        }
+      }
+    },
+    {
+      "day": "2025-04-08",
+      "candidates": 476385,
+      "valid": 473828,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2965,
+      "cross_section_ic": {
+        "reversal": 0.06904245885535319,
+        "linear": 0.0709034650883874,
+        "mlp": 0.0613876964414085,
+        "tcn": 0.0573126706555271
+      },
+      "within_stock_ic": {
+        "reversal": 0.02591352850608342,
+        "linear": 0.1394698349899697,
+        "mlp": 0.10575485991114918,
+        "tcn": 0.09674619369637108
+      },
+      "huber_sum": {
+        "zero": 351883.33682453854,
+        "linear": 348888.78148979356,
+        "mlp": 351895.3161785265,
+        "tcn": 352353.19228502864
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4668,
+          "valid": 4631,
+          "gross_sum_bp": 61859.09797300567,
+          "daily_mean_gross_bp": 13.357611309221696
+        },
+        "tcn": {
+          "selected": 4668,
+          "valid": 4643,
+          "gross_sum_bp": 53738.05456833625,
+          "daily_mean_gross_bp": 11.573994091823444
+        },
+        "linear": {
+          "selected": 4668,
+          "valid": 4624,
+          "gross_sum_bp": 57093.52736159645,
+          "daily_mean_gross_bp": 12.347216124912727
+        },
+        "mlp": {
+          "selected": 4668,
+          "valid": 4634,
+          "gross_sum_bp": 54624.87150112555,
+          "daily_mean_gross_bp": 11.787844519017167
+        }
+      }
+    },
+    {
+      "day": "2025-04-09",
+      "candidates": 507224,
+      "valid": 504063,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3044,
+      "cross_section_ic": {
+        "reversal": 0.07988694842310415,
+        "linear": 0.060105800779224845,
+        "mlp": 0.0807814691807054,
+        "tcn": 0.05284327728761062
+      },
+      "within_stock_ic": {
+        "reversal": 0.003175812466784163,
+        "linear": 0.021794779331797468,
+        "mlp": 0.01011770472387547,
+        "tcn": -0.00427992358003731
+      },
+      "huber_sum": {
+        "zero": 422741.6412267627,
+        "linear": 430429.2650620618,
+        "mlp": 426713.35409137706,
+        "tcn": 430359.0054753341
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4987,
+          "valid": 4958,
+          "gross_sum_bp": 93820.63371583624,
+          "daily_mean_gross_bp": 18.92308062037843
+        },
+        "tcn": {
+          "selected": 4987,
+          "valid": 4963,
+          "gross_sum_bp": 72805.39041871279,
+          "daily_mean_gross_bp": 14.669633370685633
+        },
+        "linear": {
+          "selected": 4987,
+          "valid": 4954,
+          "gross_sum_bp": 82669.95002349482,
+          "daily_mean_gross_bp": 16.687515144023983
+        },
+        "mlp": {
+          "selected": 4987,
+          "valid": 4952,
+          "gross_sum_bp": 85190.9121254547,
+          "daily_mean_gross_bp": 17.203334435673405
+        }
+      }
+    },
+    {
+      "day": "2025-04-10",
+      "candidates": 499286,
+      "valid": 494384,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3007,
+      "cross_section_ic": {
+        "reversal": 0.09032253567068707,
+        "linear": 0.09329081537921007,
+        "mlp": 0.10640373650269613,
+        "tcn": 0.08988333821698137
+      },
+      "within_stock_ic": {
+        "reversal": 0.12815442893481105,
+        "linear": 0.0850686413860327,
+        "mlp": 0.09269479411208004,
+        "tcn": 0.10843374459915407
+      },
+      "huber_sum": {
+        "zero": 211592.053315681,
+        "linear": 210584.97163719917,
+        "mlp": 209321.9276856273,
+        "tcn": 209084.77868927384
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4905,
+          "valid": 4864,
+          "gross_sum_bp": 22101.195499027315,
+          "daily_mean_gross_bp": 4.543831311477655
+        },
+        "tcn": {
+          "selected": 4905,
+          "valid": 4874,
+          "gross_sum_bp": 14190.426697797373,
+          "daily_mean_gross_bp": 2.9114539798517383
+        },
+        "linear": {
+          "selected": 4905,
+          "valid": 4856,
+          "gross_sum_bp": 18624.744577955847,
+          "daily_mean_gross_bp": 3.8354086857404956
+        },
+        "mlp": {
+          "selected": 4905,
+          "valid": 4857,
+          "gross_sum_bp": 18627.22405111288,
+          "daily_mean_gross_bp": 3.8351295143324853
+        }
+      }
+    },
+    {
+      "day": "2025-04-11",
+      "candidates": 504352,
+      "valid": 496768,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3028,
+      "cross_section_ic": {
+        "reversal": 0.05928210133206715,
+        "linear": 0.0671715471743861,
+        "mlp": 0.09136353504571465,
+        "tcn": 0.09443043713173918
+      },
+      "within_stock_ic": {
+        "reversal": 0.07998317779332412,
+        "linear": 0.09199337105631653,
+        "mlp": 0.11095731551227095,
+        "tcn": 0.10523330246332
+      },
+      "huber_sum": {
+        "zero": 179572.72113253904,
+        "linear": 178547.75160111015,
+        "mlp": 177437.51948735456,
+        "tcn": 177126.4419865284
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4938,
+          "valid": 4876,
+          "gross_sum_bp": 5779.74585454489,
+          "daily_mean_gross_bp": 1.1853457453947682
+        },
+        "tcn": {
+          "selected": 4938,
+          "valid": 4882,
+          "gross_sum_bp": 20496.062713572297,
+          "daily_mean_gross_bp": 4.1982922395682705
+        },
+        "linear": {
+          "selected": 4938,
+          "valid": 4832,
+          "gross_sum_bp": 15037.521231598477,
+          "daily_mean_gross_bp": 3.112069791307632
+        },
+        "mlp": {
+          "selected": 4938,
+          "valid": 4868,
+          "gross_sum_bp": 17553.580312143822,
+          "daily_mean_gross_bp": 3.6059121430040717
+        }
+      }
+    },
+    {
+      "day": "2025-04-14",
+      "candidates": 500345,
+      "valid": 491209,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3018,
+      "cross_section_ic": {
+        "reversal": 0.07223591907831843,
+        "linear": 0.08330535686604665,
+        "mlp": 0.0961160657714411,
+        "tcn": 0.08878805542499119
+      },
+      "within_stock_ic": {
+        "reversal": 0.07634485826558125,
+        "linear": 0.10385525602379497,
+        "mlp": 0.09101328805824599,
+        "tcn": 0.09221098613218547
+      },
+      "huber_sum": {
+        "zero": 143076.17167033115,
+        "linear": 142195.61752688442,
+        "mlp": 142165.15272287698,
+        "tcn": 142246.11236384377
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4916,
+          "valid": 4844,
+          "gross_sum_bp": 28778.566383928403,
+          "daily_mean_gross_bp": 5.9410748108853015
+        },
+        "tcn": {
+          "selected": 4916,
+          "valid": 4855,
+          "gross_sum_bp": 35855.32675480127,
+          "daily_mean_gross_bp": 7.385237230649078
+        },
+        "linear": {
+          "selected": 4916,
+          "valid": 4806,
+          "gross_sum_bp": 30984.6515704437,
+          "daily_mean_gross_bp": 6.4470768977202875
+        },
+        "mlp": {
+          "selected": 4916,
+          "valid": 4817,
+          "gross_sum_bp": 35392.07539558629,
+          "daily_mean_gross_bp": 7.347327256712952
+        }
+      }
+    },
+    {
+      "day": "2025-04-15",
+      "candidates": 505819,
+      "valid": 495246,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3047,
+      "cross_section_ic": {
+        "reversal": 0.03148701436551869,
+        "linear": 0.055757242942656354,
+        "mlp": 0.06832118923846568,
+        "tcn": 0.07070864475624801
+      },
+      "within_stock_ic": {
+        "reversal": 0.01223111685744782,
+        "linear": 0.023751641452379037,
+        "mlp": 0.020425173335861194,
+        "tcn": 0.052094845513371936
+      },
+      "huber_sum": {
+        "zero": 160176.95885040762,
+        "linear": 161312.17842733802,
+        "mlp": 160035.80623169162,
+        "tcn": 159444.53638922735
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4985,
+          "valid": 4927,
+          "gross_sum_bp": 21326.26095003381,
+          "daily_mean_gross_bp": 4.328447523855046
+        },
+        "tcn": {
+          "selected": 4985,
+          "valid": 4915,
+          "gross_sum_bp": 33268.2705715082,
+          "daily_mean_gross_bp": 6.768722395016927
+        },
+        "linear": {
+          "selected": 4985,
+          "valid": 4890,
+          "gross_sum_bp": 27065.70999148875,
+          "daily_mean_gross_bp": 5.534910018709356
+        },
+        "mlp": {
+          "selected": 4985,
+          "valid": 4889,
+          "gross_sum_bp": 30972.0608771239,
+          "daily_mean_gross_bp": 6.335050291905072
+        }
+      }
+    },
+    {
+      "day": "2025-04-16",
+      "candidates": 509921,
+      "valid": 502098,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3057,
+      "cross_section_ic": {
+        "reversal": 0.05768000940230416,
+        "linear": 0.05138187487388708,
+        "mlp": 0.05552527630854453,
+        "tcn": 0.06229608328966959
+      },
+      "within_stock_ic": {
+        "reversal": 0.01775667570535981,
+        "linear": 0.04104741540768797,
+        "mlp": -0.011347414234129464,
+        "tcn": 0.006542854952167459
+      },
+      "huber_sum": {
+        "zero": 195080.64461101822,
+        "linear": 196629.20304926857,
+        "mlp": 196213.47947071033,
+        "tcn": 195377.62310960938
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 5036,
+          "valid": 4958,
+          "gross_sum_bp": 13186.856396545752,
+          "daily_mean_gross_bp": 2.6597128673952706
+        },
+        "tcn": {
+          "selected": 5036,
+          "valid": 4987,
+          "gross_sum_bp": 10830.583009942038,
+          "daily_mean_gross_bp": 2.1717631862727167
+        },
+        "linear": {
+          "selected": 5036,
+          "valid": 4951,
+          "gross_sum_bp": 11412.26850830017,
+          "daily_mean_gross_bp": 2.305043124277958
+        },
+        "mlp": {
+          "selected": 5036,
+          "valid": 4955,
+          "gross_sum_bp": 11210.774249077049,
+          "daily_mean_gross_bp": 2.262517507381846
+        }
+      }
+    },
+    {
+      "day": "2025-04-17",
+      "candidates": 502792,
+      "valid": 492798,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3031,
+      "cross_section_ic": {
+        "reversal": 0.07052427391851253,
+        "linear": 0.08504992537054082,
+        "mlp": 0.0942637566742945,
+        "tcn": 0.09054989343486236
+      },
+      "within_stock_ic": {
+        "reversal": 0.06305528424343884,
+        "linear": 0.12341305216772121,
+        "mlp": 0.10192688115810071,
+        "tcn": 0.09323102612722478
+      },
+      "huber_sum": {
+        "zero": 141123.08531003984,
+        "linear": 139587.5495860485,
+        "mlp": 140048.1005801406,
+        "tcn": 140139.84917104623
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4930,
+          "valid": 4858,
+          "gross_sum_bp": 33325.90082311602,
+          "daily_mean_gross_bp": 6.860004286355705
+        },
+        "tcn": {
+          "selected": 4930,
+          "valid": 4869,
+          "gross_sum_bp": 33968.07502434969,
+          "daily_mean_gross_bp": 6.9763965956766665
+        },
+        "linear": {
+          "selected": 4930,
+          "valid": 4831,
+          "gross_sum_bp": 32469.719692937346,
+          "daily_mean_gross_bp": 6.721117717436834
+        },
+        "mlp": {
+          "selected": 4930,
+          "valid": 4836,
+          "gross_sum_bp": 34400.56802227186,
+          "daily_mean_gross_bp": 7.113434247781608
+        }
+      }
+    },
+    {
+      "day": "2025-04-21",
+      "candidates": 502378,
+      "valid": 493656,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3025,
+      "cross_section_ic": {
+        "reversal": 0.053049758616469225,
+        "linear": 0.0631254258397704,
+        "mlp": 0.06803688397711846,
+        "tcn": 0.059302398088126575
+      },
+      "within_stock_ic": {
+        "reversal": 0.06927813173945402,
+        "linear": 0.07012039357314363,
+        "mlp": 0.06949489548950319,
+        "tcn": 0.08462148876501994
+      },
+      "huber_sum": {
+        "zero": 129893.74064108083,
+        "linear": 130147.34048168971,
+        "mlp": 129613.5243943726,
+        "tcn": 129638.04646175262
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4933,
+          "valid": 4886,
+          "gross_sum_bp": 29165.0893673617,
+          "daily_mean_gross_bp": 5.969113665035141
+        },
+        "tcn": {
+          "selected": 4933,
+          "valid": 4886,
+          "gross_sum_bp": 30751.785796348697,
+          "daily_mean_gross_bp": 6.293857101176565
+        },
+        "linear": {
+          "selected": 4933,
+          "valid": 4826,
+          "gross_sum_bp": 32471.382713492207,
+          "daily_mean_gross_bp": 6.728425759115667
+        },
+        "mlp": {
+          "selected": 4933,
+          "valid": 4851,
+          "gross_sum_bp": 28459.308467272007,
+          "daily_mean_gross_bp": 5.866689026442384
+        }
+      }
+    },
+    {
+      "day": "2025-04-22",
+      "candidates": 500601,
+      "valid": 488652,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3021,
+      "cross_section_ic": {
+        "reversal": 0.06512123328605039,
+        "linear": 0.06352736533550501,
+        "mlp": 0.07809962808384892,
+        "tcn": 0.07900642095609987
+      },
+      "within_stock_ic": {
+        "reversal": 0.08091086167261333,
+        "linear": 0.061326752951001914,
+        "mlp": 0.0657279438440531,
+        "tcn": 0.08264830322427215
+      },
+      "huber_sum": {
+        "zero": 139611.96993678482,
+        "linear": 139440.80375224288,
+        "mlp": 138533.43107501708,
+        "tcn": 138374.64327456226
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4906,
+          "valid": 4849,
+          "gross_sum_bp": 16819.91258860277,
+          "daily_mean_gross_bp": 3.4687384179424146
+        },
+        "tcn": {
+          "selected": 4906,
+          "valid": 4853,
+          "gross_sum_bp": 21079.207606549502,
+          "daily_mean_gross_bp": 4.343541645693283
+        },
+        "linear": {
+          "selected": 4906,
+          "valid": 4812,
+          "gross_sum_bp": 19776.070477005567,
+          "daily_mean_gross_bp": 4.109740331879793
+        },
+        "mlp": {
+          "selected": 4906,
+          "valid": 4820,
+          "gross_sum_bp": 18648.069621029856,
+          "daily_mean_gross_bp": 3.868894112246858
+        }
+      }
+    },
+    {
+      "day": "2025-04-23",
+      "candidates": 502020,
+      "valid": 491999,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3020,
+      "cross_section_ic": {
+        "reversal": 0.06833390045768095,
+        "linear": 0.07268595079976203,
+        "mlp": 0.08489665508781914,
+        "tcn": 0.0874410399328689
+      },
+      "within_stock_ic": {
+        "reversal": 0.07105539216394431,
+        "linear": 0.11346551595267654,
+        "mlp": 0.09591538371684785,
+        "tcn": 0.07261278273401361
+      },
+      "huber_sum": {
+        "zero": 133913.57609328922,
+        "linear": 132591.4188842525,
+        "mlp": 133022.27424858254,
+        "tcn": 132913.4139692214
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4924,
+          "valid": 4869,
+          "gross_sum_bp": 12217.290800162227,
+          "daily_mean_gross_bp": 2.5091991785093914
+        },
+        "tcn": {
+          "selected": 4924,
+          "valid": 4875,
+          "gross_sum_bp": 16408.476356210274,
+          "daily_mean_gross_bp": 3.365841303838005
+        },
+        "linear": {
+          "selected": 4924,
+          "valid": 4825,
+          "gross_sum_bp": 17289.182955993998,
+          "daily_mean_gross_bp": 3.5832503535738858
+        },
+        "mlp": {
+          "selected": 4924,
+          "valid": 4846,
+          "gross_sum_bp": 19017.89645251402,
+          "daily_mean_gross_bp": 3.9244524251989317
+        }
+      }
+    },
+    {
+      "day": "2025-04-24",
+      "candidates": 505716,
+      "valid": 497784,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3031,
+      "cross_section_ic": {
+        "reversal": 0.06252278806301009,
+        "linear": 0.06530215199333853,
+        "mlp": 0.07457478604115449,
+        "tcn": 0.07642640826143232
+      },
+      "within_stock_ic": {
+        "reversal": 0.02843168095271396,
+        "linear": -0.01081889633721383,
+        "mlp": -0.02086886265849037,
+        "tcn": 0.031959792510262985
+      },
+      "huber_sum": {
+        "zero": 153388.94799723005,
+        "linear": 156049.86595049128,
+        "mlp": 154069.96478725044,
+        "tcn": 153082.68274224288
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4987,
+          "valid": 4933,
+          "gross_sum_bp": 12587.363185348557,
+          "daily_mean_gross_bp": 2.551664947364394
+        },
+        "tcn": {
+          "selected": 4987,
+          "valid": 4931,
+          "gross_sum_bp": 14322.287211877814,
+          "daily_mean_gross_bp": 2.90454009569617
+        },
+        "linear": {
+          "selected": 4987,
+          "valid": 4902,
+          "gross_sum_bp": 13327.490761494038,
+          "daily_mean_gross_bp": 2.7187863650538633
+        },
+        "mlp": {
+          "selected": 4987,
+          "valid": 4898,
+          "gross_sum_bp": 9986.551391331972,
+          "daily_mean_gross_bp": 2.038903918197626
+        }
+      }
+    },
+    {
+      "day": "2025-04-25",
+      "candidates": 502497,
+      "valid": 492474,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3028,
+      "cross_section_ic": {
+        "reversal": 0.04819658555754107,
+        "linear": 0.0584215170195543,
+        "mlp": 0.08573551615756074,
+        "tcn": 0.07627245525975561
+      },
+      "within_stock_ic": {
+        "reversal": 0.04065279111498745,
+        "linear": 0.07709522352836805,
+        "mlp": 0.08046372899394107,
+        "tcn": 0.03317160986306278
+      },
+      "huber_sum": {
+        "zero": 150784.7868781175,
+        "linear": 150544.50690280122,
+        "mlp": 150227.47715491836,
+        "tcn": 150588.5683279112
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4924,
+          "valid": 4876,
+          "gross_sum_bp": 8038.164407786548,
+          "daily_mean_gross_bp": 1.6485160803499892
+        },
+        "tcn": {
+          "selected": 4924,
+          "valid": 4870,
+          "gross_sum_bp": 13153.083924254533,
+          "daily_mean_gross_bp": 2.7008385881426147
+        },
+        "linear": {
+          "selected": 4924,
+          "valid": 4827,
+          "gross_sum_bp": 9882.230626289762,
+          "daily_mean_gross_bp": 2.0472820854132507
+        },
+        "mlp": {
+          "selected": 4924,
+          "valid": 4833,
+          "gross_sum_bp": 20529.987528767382,
+          "daily_mean_gross_bp": 4.2478765836472965
+        }
+      }
+    },
+    {
+      "day": "2025-04-28",
+      "candidates": 500030,
+      "valid": 489723,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3013,
+      "cross_section_ic": {
+        "reversal": 0.04507948252061891,
+        "linear": 0.05869656856916313,
+        "mlp": 0.0770150931101805,
+        "tcn": 0.07306635609263973
+      },
+      "within_stock_ic": {
+        "reversal": 0.07284555311448174,
+        "linear": 0.08550712571686855,
+        "mlp": 0.08407450271973599,
+        "tcn": 0.07145840563978913
+      },
+      "huber_sum": {
+        "zero": 134238.68795552728,
+        "linear": 133742.43661623506,
+        "mlp": 133028.99360308924,
+        "tcn": 133094.3855198563
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4918,
+          "valid": 4847,
+          "gross_sum_bp": 10569.827749030657,
+          "daily_mean_gross_bp": 2.180694811023449
+        },
+        "tcn": {
+          "selected": 4918,
+          "valid": 4870,
+          "gross_sum_bp": 18252.489101868807,
+          "daily_mean_gross_bp": 3.747944374100371
+        },
+        "linear": {
+          "selected": 4918,
+          "valid": 4816,
+          "gross_sum_bp": 14480.88527762159,
+          "daily_mean_gross_bp": 3.006828338376576
+        },
+        "mlp": {
+          "selected": 4918,
+          "valid": 4838,
+          "gross_sum_bp": 15775.02020646969,
+          "daily_mean_gross_bp": 3.260649071200845
+        }
+      }
+    },
+    {
+      "day": "2025-04-29",
+      "candidates": 495568,
+      "valid": 486662,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2980,
+      "cross_section_ic": {
+        "reversal": 0.04891984118966772,
+        "linear": 0.05715449609178506,
+        "mlp": 0.061853080666435974,
+        "tcn": 0.05828568220005809
+      },
+      "within_stock_ic": {
+        "reversal": 0.06714279281086015,
+        "linear": 0.057682175229695924,
+        "mlp": 0.05637940001036861,
+        "tcn": 0.07221122046556955
+      },
+      "huber_sum": {
+        "zero": 126361.19514797229,
+        "linear": 126686.5013951968,
+        "mlp": 126021.86732774126,
+        "tcn": 125916.6250234787
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4877,
+          "valid": 4824,
+          "gross_sum_bp": 13942.309057659706,
+          "daily_mean_gross_bp": 2.89019673666246
+        },
+        "tcn": {
+          "selected": 4877,
+          "valid": 4831,
+          "gross_sum_bp": 15867.343627629132,
+          "daily_mean_gross_bp": 3.2844842946862207
+        },
+        "linear": {
+          "selected": 4877,
+          "valid": 4788,
+          "gross_sum_bp": 21135.115353673085,
+          "daily_mean_gross_bp": 4.414184493248347
+        },
+        "mlp": {
+          "selected": 4877,
+          "valid": 4814,
+          "gross_sum_bp": 18259.67648741832,
+          "daily_mean_gross_bp": 3.7930362458284836
+        }
+      }
+    },
+    {
+      "day": "2025-04-30",
+      "candidates": 497123,
+      "valid": 490030,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2986,
+      "cross_section_ic": {
+        "reversal": 0.05329259186350803,
+        "linear": 0.05596887747132793,
+        "mlp": 0.06985817686221656,
+        "tcn": 0.066226990479214
+      },
+      "within_stock_ic": {
+        "reversal": 0.07010366433471306,
+        "linear": 0.04683669020581319,
+        "mlp": 0.06555505408777779,
+        "tcn": 0.06586085003008393
+      },
+      "huber_sum": {
+        "zero": 121883.38426209905,
+        "linear": 122358.61772762911,
+        "mlp": 121221.32519880997,
+        "tcn": 121172.2332371888
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4901,
+          "valid": 4846,
+          "gross_sum_bp": 16201.906905388349,
+          "daily_mean_gross_bp": 3.343356769580757
+        },
+        "tcn": {
+          "selected": 4901,
+          "valid": 4851,
+          "gross_sum_bp": 15688.049920064375,
+          "daily_mean_gross_bp": 3.2339826675045096
+        },
+        "linear": {
+          "selected": 4901,
+          "valid": 4820,
+          "gross_sum_bp": 15311.313708766727,
+          "daily_mean_gross_bp": 3.176621101403885
+        },
+        "mlp": {
+          "selected": 4901,
+          "valid": 4844,
+          "gross_sum_bp": 17476.21125878819,
+          "daily_mean_gross_bp": 3.607805792483111
+        }
+      }
+    },
+    {
+      "day": "2025-05-06",
+      "candidates": 497515,
+      "valid": 493525,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2977,
+      "cross_section_ic": {
+        "reversal": 0.06260200900638438,
+        "linear": 0.07447100062865689,
+        "mlp": 0.08200600529880347,
+        "tcn": 0.07177733415920422
+      },
+      "within_stock_ic": {
+        "reversal": 0.06976999248378299,
+        "linear": 0.10955421308139295,
+        "mlp": 0.10860956014644661,
+        "tcn": 0.08890062035845468
+      },
+      "huber_sum": {
+        "zero": 111430.67802120121,
+        "linear": 111224.1139888526,
+        "mlp": 111142.04148653554,
+        "tcn": 111385.62321837369
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4901,
+          "valid": 4873,
+          "gross_sum_bp": 33424.98540597524,
+          "daily_mean_gross_bp": 6.859221302272776
+        },
+        "tcn": {
+          "selected": 4901,
+          "valid": 4876,
+          "gross_sum_bp": 29081.645216595192,
+          "daily_mean_gross_bp": 5.964242251147496
+        },
+        "linear": {
+          "selected": 4901,
+          "valid": 4849,
+          "gross_sum_bp": 29002.513574133,
+          "daily_mean_gross_bp": 5.981132929291195
+        },
+        "mlp": {
+          "selected": 4901,
+          "valid": 4859,
+          "gross_sum_bp": 31084.063607572134,
+          "daily_mean_gross_bp": 6.3972141608504085
+        }
+      }
+    },
+    {
+      "day": "2025-05-07",
+      "candidates": 499806,
+      "valid": 494789,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2990,
+      "cross_section_ic": {
+        "reversal": 0.036737587975815264,
+        "linear": 0.039573284599892705,
+        "mlp": 0.0614505891896168,
+        "tcn": 0.055321752946442766
+      },
+      "within_stock_ic": {
+        "reversal": -0.023591143583323232,
+        "linear": 0.014712211142260566,
+        "mlp": 0.04192500405659898,
+        "tcn": 0.00901876642422936
+      },
+      "huber_sum": {
+        "zero": 144495.61186344415,
+        "linear": 146421.59422333978,
+        "mlp": 144014.03989361526,
+        "tcn": 144217.537229736
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4901,
+          "valid": 4875,
+          "gross_sum_bp": 12299.352018888563,
+          "daily_mean_gross_bp": 2.522944003874577
+        },
+        "tcn": {
+          "selected": 4901,
+          "valid": 4876,
+          "gross_sum_bp": 17248.256981838636,
+          "daily_mean_gross_bp": 3.537378380196603
+        },
+        "linear": {
+          "selected": 4901,
+          "valid": 4857,
+          "gross_sum_bp": 14022.11242410069,
+          "daily_mean_gross_bp": 2.886990410562217
+        },
+        "mlp": {
+          "selected": 4901,
+          "valid": 4869,
+          "gross_sum_bp": 19849.362857319407,
+          "daily_mean_gross_bp": 4.076681630174452
+        }
+      }
+    },
+    {
+      "day": "2025-05-08",
+      "candidates": 499414,
+      "valid": 493085,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2991,
+      "cross_section_ic": {
+        "reversal": 0.0640931617184927,
+        "linear": 0.07742573372489786,
+        "mlp": 0.0933466855326702,
+        "tcn": 0.09026834799292982
+      },
+      "within_stock_ic": {
+        "reversal": 0.082850177962195,
+        "linear": 0.09581026173898978,
+        "mlp": 0.10281861913355224,
+        "tcn": 0.11481424235752774
+      },
+      "huber_sum": {
+        "zero": 114103.48086059105,
+        "linear": 113556.17323351593,
+        "mlp": 113313.75400117676,
+        "tcn": 113266.2995364347
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4901,
+          "valid": 4868,
+          "gross_sum_bp": 14026.389923841893,
+          "daily_mean_gross_bp": 2.8813455061302164
+        },
+        "tcn": {
+          "selected": 4901,
+          "valid": 4859,
+          "gross_sum_bp": 23497.88122904699,
+          "daily_mean_gross_bp": 4.835950036848526
+        },
+        "linear": {
+          "selected": 4901,
+          "valid": 4828,
+          "gross_sum_bp": 19443.530572570737,
+          "daily_mean_gross_bp": 4.0272432834653555
+        },
+        "mlp": {
+          "selected": 4901,
+          "valid": 4842,
+          "gross_sum_bp": 21005.38672575401,
+          "daily_mean_gross_bp": 4.338163305608016
+        }
+      }
+    },
+    {
+      "day": "2025-05-09",
+      "candidates": 501743,
+      "valid": 494060,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3002,
+      "cross_section_ic": {
+        "reversal": 0.06345801190671624,
+        "linear": 0.06992840086533354,
+        "mlp": 0.0772938381158288,
+        "tcn": 0.07674533186015262
+      },
+      "within_stock_ic": {
+        "reversal": 0.055905572379929935,
+        "linear": 0.0707692507871584,
+        "mlp": 0.08806821211067889,
+        "tcn": 0.07782726414585339
+      },
+      "huber_sum": {
+        "zero": 124756.49193898727,
+        "linear": 124657.51958463721,
+        "mlp": 123927.2173360644,
+        "tcn": 123773.4216975866
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4902,
+          "valid": 4866,
+          "gross_sum_bp": 3686.74566454004,
+          "daily_mean_gross_bp": 0.7576542672708672
+        },
+        "tcn": {
+          "selected": 4902,
+          "valid": 4854,
+          "gross_sum_bp": 6177.5028264322345,
+          "daily_mean_gross_bp": 1.2726623045801884
+        },
+        "linear": {
+          "selected": 4902,
+          "valid": 4824,
+          "gross_sum_bp": 8056.287416939527,
+          "daily_mean_gross_bp": 1.6700429968780115
+        },
+        "mlp": {
+          "selected": 4902,
+          "valid": 4824,
+          "gross_sum_bp": 7244.03836231315,
+          "daily_mean_gross_bp": 1.501666327179343
+        }
+      }
+    },
+    {
+      "day": "2025-05-12",
+      "candidates": 498732,
+      "valid": 487279,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3003,
+      "cross_section_ic": {
+        "reversal": 0.06882156432274962,
+        "linear": 0.07594617457560687,
+        "mlp": 0.08736133648426296,
+        "tcn": 0.0835092307468243
+      },
+      "within_stock_ic": {
+        "reversal": 0.10662927754618158,
+        "linear": 0.05607557930698517,
+        "mlp": 0.06850371968034334,
+        "tcn": 0.1108791449754045
+      },
+      "huber_sum": {
+        "zero": 112536.53205100098,
+        "linear": 112786.31410643063,
+        "mlp": 112090.83520798042,
+        "tcn": 111941.62606003824
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4883,
+          "valid": 4821,
+          "gross_sum_bp": 17103.355971236226,
+          "daily_mean_gross_bp": 3.547678069121806
+        },
+        "tcn": {
+          "selected": 4883,
+          "valid": 4813,
+          "gross_sum_bp": 23377.58608178611,
+          "daily_mean_gross_bp": 4.8571755831676935
+        },
+        "linear": {
+          "selected": 4883,
+          "valid": 4794,
+          "gross_sum_bp": 20002.01777734097,
+          "daily_mean_gross_bp": 4.172302414964742
+        },
+        "mlp": {
+          "selected": 4883,
+          "valid": 4784,
+          "gross_sum_bp": 23173.874474992197,
+          "daily_mean_gross_bp": 4.844037306645526
+        }
+      }
+    },
+    {
+      "day": "2025-05-13",
+      "candidates": 499902,
+      "valid": 490056,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3001,
+      "cross_section_ic": {
+        "reversal": 0.058609595118130846,
+        "linear": 0.06926957162583958,
+        "mlp": 0.080130054041244,
+        "tcn": 0.08785251368639789
+      },
+      "within_stock_ic": {
+        "reversal": 0.03709878959585839,
+        "linear": 0.09484670420252946,
+        "mlp": 0.1217846757150517,
+        "tcn": 0.10683491575570331
+      },
+      "huber_sum": {
+        "zero": 117381.09109891698,
+        "linear": 117031.50770900643,
+        "mlp": 116312.60920274895,
+        "tcn": 116167.87363196594
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4900,
+          "valid": 4850,
+          "gross_sum_bp": 9398.732398628246,
+          "daily_mean_gross_bp": 1.937882968789329
+        },
+        "tcn": {
+          "selected": 4900,
+          "valid": 4832,
+          "gross_sum_bp": 15030.752430598593,
+          "daily_mean_gross_bp": 3.1106689632861326
+        },
+        "linear": {
+          "selected": 4900,
+          "valid": 4781,
+          "gross_sum_bp": 12747.248486094164,
+          "daily_mean_gross_bp": 2.6662305973842635
+        },
+        "mlp": {
+          "selected": 4900,
+          "valid": 4786,
+          "gross_sum_bp": 19326.24260898125,
+          "daily_mean_gross_bp": 4.038078271830599
+        }
+      }
+    },
+    {
+      "day": "2025-05-14",
+      "candidates": 500280,
+      "valid": 492692,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3000,
+      "cross_section_ic": {
+        "reversal": 0.06118983331708699,
+        "linear": 0.060240952958660124,
+        "mlp": 0.08205000866021953,
+        "tcn": 0.0906346185025464
+      },
+      "within_stock_ic": {
+        "reversal": 0.09882878041399037,
+        "linear": 0.11832503069790162,
+        "mlp": 0.14946980324440012,
+        "tcn": 0.15481111837946696
+      },
+      "huber_sum": {
+        "zero": 142506.16229946527,
+        "linear": 141085.9890555168,
+        "mlp": 141187.20515730738,
+        "tcn": 141010.34813996684
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4898,
+          "valid": 4859,
+          "gross_sum_bp": 25871.96359377226,
+          "daily_mean_gross_bp": 5.324544884497275
+        },
+        "tcn": {
+          "selected": 4898,
+          "valid": 4863,
+          "gross_sum_bp": 25797.518170862902,
+          "daily_mean_gross_bp": 5.304856707970986
+        },
+        "linear": {
+          "selected": 4898,
+          "valid": 4834,
+          "gross_sum_bp": 20498.59695631449,
+          "daily_mean_gross_bp": 4.240504128323229
+        },
+        "mlp": {
+          "selected": 4898,
+          "valid": 4840,
+          "gross_sum_bp": 26704.68333734088,
+          "daily_mean_gross_bp": 5.517496557301835
+        }
+      }
+    },
+    {
+      "day": "2025-05-15",
+      "candidates": 499460,
+      "valid": 489505,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3001,
+      "cross_section_ic": {
+        "reversal": 0.058711348363233204,
+        "linear": 0.052858836501348525,
+        "mlp": 0.06694775358319122,
+        "tcn": 0.06635727929246872
+      },
+      "within_stock_ic": {
+        "reversal": 0.044414515201913016,
+        "linear": 0.007194200118954592,
+        "mlp": -0.0010950915082547621,
+        "tcn": 0.032102213274080825
+      },
+      "huber_sum": {
+        "zero": 121818.98455110623,
+        "linear": 123104.31257304593,
+        "mlp": 121719.90885070851,
+        "tcn": 121301.69252317082
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4895,
+          "valid": 4846,
+          "gross_sum_bp": 16773.916072751108,
+          "daily_mean_gross_bp": 3.461394154509102
+        },
+        "tcn": {
+          "selected": 4895,
+          "valid": 4826,
+          "gross_sum_bp": 19532.17349144278,
+          "daily_mean_gross_bp": 4.047280043813258
+        },
+        "linear": {
+          "selected": 4895,
+          "valid": 4795,
+          "gross_sum_bp": 20717.550613602478,
+          "daily_mean_gross_bp": 4.320657062273718
+        },
+        "mlp": {
+          "selected": 4895,
+          "valid": 4807,
+          "gross_sum_bp": 17858.99505650493,
+          "daily_mean_gross_bp": 3.7152059614114687
+        }
+      }
+    },
+    {
+      "day": "2025-05-16",
+      "candidates": 498385,
+      "valid": 489090,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2996,
+      "cross_section_ic": {
+        "reversal": 0.06748446908205864,
+        "linear": 0.06437436156304571,
+        "mlp": 0.07939530851746127,
+        "tcn": 0.07603435706814299
+      },
+      "within_stock_ic": {
+        "reversal": 0.07317932529435951,
+        "linear": 0.0924910542456155,
+        "mlp": 0.10263761564163522,
+        "tcn": 0.07683385610953933
+      },
+      "huber_sum": {
+        "zero": 119208.47617040611,
+        "linear": 118489.3193419817,
+        "mlp": 118116.65339521588,
+        "tcn": 118202.89034476453
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4899,
+          "valid": 4855,
+          "gross_sum_bp": 16439.40198828731,
+          "daily_mean_gross_bp": 3.3860766196266345
+        },
+        "tcn": {
+          "selected": 4899,
+          "valid": 4857,
+          "gross_sum_bp": 22317.20292439512,
+          "daily_mean_gross_bp": 4.594853391886992
+        },
+        "linear": {
+          "selected": 4899,
+          "valid": 4808,
+          "gross_sum_bp": 15711.187399696546,
+          "daily_mean_gross_bp": 3.267717845194789
+        },
+        "mlp": {
+          "selected": 4899,
+          "valid": 4812,
+          "gross_sum_bp": 18988.2230073338,
+          "daily_mean_gross_bp": 3.946014756303782
+        }
+      }
+    },
+    {
+      "day": "2025-05-19",
+      "candidates": 497116,
+      "valid": 490247,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2985,
+      "cross_section_ic": {
+        "reversal": 0.06779967501456859,
+        "linear": 0.08211371823704039,
+        "mlp": 0.08915975914103913,
+        "tcn": 0.08316591682798086
+      },
+      "within_stock_ic": {
+        "reversal": 0.07439807755131583,
+        "linear": 0.09317284947042609,
+        "mlp": 0.08714590627614852,
+        "tcn": 0.08868681611307423
+      },
+      "huber_sum": {
+        "zero": 127310.65925723851,
+        "linear": 126811.46217514799,
+        "mlp": 126612.12636390046,
+        "tcn": 126530.16247174778
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4895,
+          "valid": 4868,
+          "gross_sum_bp": 26225.987499539813,
+          "daily_mean_gross_bp": 5.387425534005714
+        },
+        "tcn": {
+          "selected": 4895,
+          "valid": 4856,
+          "gross_sum_bp": 34232.20563743748,
+          "daily_mean_gross_bp": 7.049465740823204
+        },
+        "linear": {
+          "selected": 4895,
+          "valid": 4833,
+          "gross_sum_bp": 32555.605217995002,
+          "daily_mean_gross_bp": 6.736107018000207
+        },
+        "mlp": {
+          "selected": 4895,
+          "valid": 4830,
+          "gross_sum_bp": 28618.468820416525,
+          "daily_mean_gross_bp": 5.9251488241028
+        }
+      }
+    },
+    {
+      "day": "2025-05-20",
+      "candidates": 497812,
+      "valid": 490189,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2991,
+      "cross_section_ic": {
+        "reversal": 0.05571035051929977,
+        "linear": 0.0550853047600764,
+        "mlp": 0.070408965806539,
+        "tcn": 0.07116177145041769
+      },
+      "within_stock_ic": {
+        "reversal": 0.07507490758393275,
+        "linear": 0.10134327033258446,
+        "mlp": 0.09493116230179881,
+        "tcn": 0.08580035223748109
+      },
+      "huber_sum": {
+        "zero": 122119.47337927365,
+        "linear": 121882.51145170801,
+        "mlp": 121637.47198882957,
+        "tcn": 121576.85575251211
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4898,
+          "valid": 4872,
+          "gross_sum_bp": 18769.798445856162,
+          "daily_mean_gross_bp": 3.8525858879015114
+        },
+        "tcn": {
+          "selected": 4898,
+          "valid": 4867,
+          "gross_sum_bp": 22408.584435626275,
+          "daily_mean_gross_bp": 4.604188295793358
+        },
+        "linear": {
+          "selected": 4898,
+          "valid": 4830,
+          "gross_sum_bp": 21171.869583666194,
+          "daily_mean_gross_bp": 4.383409851690724
+        },
+        "mlp": {
+          "selected": 4898,
+          "valid": 4843,
+          "gross_sum_bp": 19872.905189112473,
+          "daily_mean_gross_bp": 4.103428698970157
+        }
+      }
+    },
+    {
+      "day": "2025-05-21",
+      "candidates": 499652,
+      "valid": 490445,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3001,
+      "cross_section_ic": {
+        "reversal": 0.05329334888365868,
+        "linear": 0.06646765865084363,
+        "mlp": 0.07544878436554976,
+        "tcn": 0.07652125610404062
+      },
+      "within_stock_ic": {
+        "reversal": 0.0458506220389775,
+        "linear": 0.1173650389797116,
+        "mlp": 0.10732848262475754,
+        "tcn": 0.08005027063949581
+      },
+      "huber_sum": {
+        "zero": 126309.51538223034,
+        "linear": 125047.2385566737,
+        "mlp": 125133.2133446887,
+        "tcn": 125201.0469237616
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4898,
+          "valid": 4848,
+          "gross_sum_bp": 10092.888223538677,
+          "daily_mean_gross_bp": 2.0818663827431263
+        },
+        "tcn": {
+          "selected": 4898,
+          "valid": 4862,
+          "gross_sum_bp": 16803.92820862413,
+          "daily_mean_gross_bp": 3.456176102144
+        },
+        "linear": {
+          "selected": 4898,
+          "valid": 4833,
+          "gross_sum_bp": 15192.951950814513,
+          "daily_mean_gross_bp": 3.1435861681801187
+        },
+        "mlp": {
+          "selected": 4898,
+          "valid": 4824,
+          "gross_sum_bp": 17216.244884065083,
+          "daily_mean_gross_bp": 3.5688733175922644
+        }
+      }
+    },
+    {
+      "day": "2025-05-22",
+      "candidates": 502250,
+      "valid": 496840,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3002,
+      "cross_section_ic": {
+        "reversal": 0.04780969395491872,
+        "linear": 0.04826829343111047,
+        "mlp": 0.05987402318476045,
+        "tcn": 0.06830214897427726
+      },
+      "within_stock_ic": {
+        "reversal": 0.047257029336644225,
+        "linear": 0.030884000655752752,
+        "mlp": 0.0592286419668589,
+        "tcn": 0.02981574986692178
+      },
+      "huber_sum": {
+        "zero": 136266.0720662458,
+        "linear": 138085.5066785787,
+        "mlp": 136221.56804692306,
+        "tcn": 135786.573458334
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4902,
+          "valid": 4881,
+          "gross_sum_bp": 1434.8103341569438,
+          "daily_mean_gross_bp": 0.2939582737465568
+        },
+        "tcn": {
+          "selected": 4902,
+          "valid": 4885,
+          "gross_sum_bp": 8745.939968437648,
+          "daily_mean_gross_bp": 1.7903664213792523
+        },
+        "linear": {
+          "selected": 4902,
+          "valid": 4857,
+          "gross_sum_bp": 3959.5866035576637,
+          "daily_mean_gross_bp": 0.8152329840555206
+        },
+        "mlp": {
+          "selected": 4902,
+          "valid": 4844,
+          "gross_sum_bp": 8505.78218499124,
+          "daily_mean_gross_bp": 1.755941821839645
+        }
+      }
+    },
+    {
+      "day": "2025-05-23",
+      "candidates": 502170,
+      "valid": 494073,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3012,
+      "cross_section_ic": {
+        "reversal": 0.050936479004588975,
+        "linear": 0.060007107432365224,
+        "mlp": 0.07991192442024658,
+        "tcn": 0.0672233595785766
+      },
+      "within_stock_ic": {
+        "reversal": 0.0011673990584658933,
+        "linear": 0.10314110390445357,
+        "mlp": 0.07311227908378914,
+        "tcn": 0.06835550130615706
+      },
+      "huber_sum": {
+        "zero": 151501.96805327106,
+        "linear": 151141.40993692738,
+        "mlp": 150247.54159152272,
+        "tcn": 150452.26574158456
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4904,
+          "valid": 4863,
+          "gross_sum_bp": 3283.0081536595726,
+          "daily_mean_gross_bp": 0.6750993530042304
+        },
+        "tcn": {
+          "selected": 4904,
+          "valid": 4871,
+          "gross_sum_bp": 8452.701802444535,
+          "daily_mean_gross_bp": 1.7353113944661334
+        },
+        "linear": {
+          "selected": 4904,
+          "valid": 4838,
+          "gross_sum_bp": 12560.430752838163,
+          "daily_mean_gross_bp": 2.5962031320459205
+        },
+        "mlp": {
+          "selected": 4904,
+          "valid": 4845,
+          "gross_sum_bp": 13241.45321409417,
+          "daily_mean_gross_bp": 2.7330140792764026
+        }
+      }
+    },
+    {
+      "day": "2025-05-27",
+      "candidates": 497987,
+      "valid": 487024,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2997,
+      "cross_section_ic": {
+        "reversal": 0.04376826542277401,
+        "linear": 0.06585992276401795,
+        "mlp": 0.0729589331546699,
+        "tcn": 0.07406042326925394
+      },
+      "within_stock_ic": {
+        "reversal": 0.028765464257059427,
+        "linear": 0.07498206496795175,
+        "mlp": 0.044319198244658804,
+        "tcn": 0.06677492994172066
+      },
+      "huber_sum": {
+        "zero": 126736.04170148048,
+        "linear": 126670.28096738068,
+        "mlp": 126274.27971025647,
+        "tcn": 125996.14937981816
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4893,
+          "valid": 4832,
+          "gross_sum_bp": 20729.57693930855,
+          "daily_mean_gross_bp": 4.2900614526714715
+        },
+        "tcn": {
+          "selected": 4893,
+          "valid": 4828,
+          "gross_sum_bp": 22714.030145128963,
+          "daily_mean_gross_bp": 4.70464584613276
+        },
+        "linear": {
+          "selected": 4893,
+          "valid": 4778,
+          "gross_sum_bp": 23493.393188766546,
+          "daily_mean_gross_bp": 4.916993132851935
+        },
+        "mlp": {
+          "selected": 4893,
+          "valid": 4795,
+          "gross_sum_bp": 23306.203806227106,
+          "daily_mean_gross_bp": 4.860522170224631
+        }
+      }
+    },
+    {
+      "day": "2025-05-28",
+      "candidates": 498936,
+      "valid": 488505,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3002,
+      "cross_section_ic": {
+        "reversal": 0.05443242308379264,
+        "linear": 0.05335588314684203,
+        "mlp": 0.06788541223771787,
+        "tcn": 0.07068983085192114
+      },
+      "within_stock_ic": {
+        "reversal": 0.04704163523067065,
+        "linear": 0.09253566946313667,
+        "mlp": 0.0772809822332649,
+        "tcn": 0.06627297667915129
+      },
+      "huber_sum": {
+        "zero": 130891.36210615785,
+        "linear": 130527.37195521613,
+        "mlp": 130172.66482623864,
+        "tcn": 129918.49854100298
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4895,
+          "valid": 4844,
+          "gross_sum_bp": 13721.33192998251,
+          "daily_mean_gross_bp": 2.8326449070979582
+        },
+        "tcn": {
+          "selected": 4895,
+          "valid": 4834,
+          "gross_sum_bp": 16122.43150503346,
+          "daily_mean_gross_bp": 3.335215454082222
+        },
+        "linear": {
+          "selected": 4895,
+          "valid": 4797,
+          "gross_sum_bp": 8894.274019972578,
+          "daily_mean_gross_bp": 1.854132587027846
+        },
+        "mlp": {
+          "selected": 4895,
+          "valid": 4807,
+          "gross_sum_bp": 13810.254841950542,
+          "daily_mean_gross_bp": 2.872946711452162
+        }
+      }
+    },
+    {
+      "day": "2025-05-29",
+      "candidates": 497745,
+      "valid": 491611,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2994,
+      "cross_section_ic": {
+        "reversal": 0.05954988150918406,
+        "linear": 0.06857192073072294,
+        "mlp": 0.08114196813369096,
+        "tcn": 0.07350321692418192
+      },
+      "within_stock_ic": {
+        "reversal": 0.07611324039847213,
+        "linear": 0.07659966711892435,
+        "mlp": 0.06852290438856028,
+        "tcn": 0.07390109421006612
+      },
+      "huber_sum": {
+        "zero": 114948.10132422937,
+        "linear": 114786.15459957997,
+        "mlp": 114216.0789315016,
+        "tcn": 114282.31944740155
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4891,
+          "valid": 4858,
+          "gross_sum_bp": 24285.720167437044,
+          "daily_mean_gross_bp": 4.999119013469955
+        },
+        "tcn": {
+          "selected": 4891,
+          "valid": 4855,
+          "gross_sum_bp": 25025.74594598526,
+          "daily_mean_gross_bp": 5.154633562509837
+        },
+        "linear": {
+          "selected": 4891,
+          "valid": 4832,
+          "gross_sum_bp": 23332.573163784302,
+          "daily_mean_gross_bp": 4.828761002438804
+        },
+        "mlp": {
+          "selected": 4891,
+          "valid": 4834,
+          "gross_sum_bp": 24888.77309303503,
+          "daily_mean_gross_bp": 5.148691165294793
+        }
+      }
+    },
+    {
+      "day": "2025-05-30",
+      "candidates": 500765,
+      "valid": 493044,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3006,
+      "cross_section_ic": {
+        "reversal": 0.05198459607120508,
+        "linear": 0.05242150965511143,
+        "mlp": 0.07350150012665205,
+        "tcn": 0.08098604016818561
+      },
+      "within_stock_ic": {
+        "reversal": 0.08641416372365929,
+        "linear": 0.11617451977543891,
+        "mlp": 0.11957564642814049,
+        "tcn": 0.11013261388926922
+      },
+      "huber_sum": {
+        "zero": 123217.51558588716,
+        "linear": 122392.40693039792,
+        "mlp": 121852.1375078456,
+        "tcn": 121650.15178635954
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4903,
+          "valid": 4860,
+          "gross_sum_bp": 2988.7979964189144,
+          "daily_mean_gross_bp": 0.6149790116088302
+        },
+        "tcn": {
+          "selected": 4903,
+          "valid": 4869,
+          "gross_sum_bp": 9251.588338015714,
+          "daily_mean_gross_bp": 1.900100295341079
+        },
+        "linear": {
+          "selected": 4903,
+          "valid": 4841,
+          "gross_sum_bp": 2696.744666611661,
+          "daily_mean_gross_bp": 0.557063554350684
+        },
+        "mlp": {
+          "selected": 4903,
+          "valid": 4840,
+          "gross_sum_bp": 9582.214992982295,
+          "daily_mean_gross_bp": 1.9797964861533668
+        }
+      }
+    },
+    {
+      "day": "2025-06-03",
+      "candidates": 497936,
+      "valid": 490262,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2987,
+      "cross_section_ic": {
+        "reversal": 0.06273999902005002,
+        "linear": 0.07288238055958844,
+        "mlp": 0.08436784180825302,
+        "tcn": 0.08243633174864698
+      },
+      "within_stock_ic": {
+        "reversal": 0.09288472142240067,
+        "linear": 0.1077797784422253,
+        "mlp": 0.12179595799071312,
+        "tcn": 0.10263706969920652
+      },
+      "huber_sum": {
+        "zero": 116584.21613244698,
+        "linear": 115682.67823237939,
+        "mlp": 115460.76029418266,
+        "tcn": 115531.16199899843
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4898,
+          "valid": 4868,
+          "gross_sum_bp": 15601.248291606737,
+          "daily_mean_gross_bp": 3.204857907067941
+        },
+        "tcn": {
+          "selected": 4898,
+          "valid": 4851,
+          "gross_sum_bp": 23616.943460475093,
+          "daily_mean_gross_bp": 4.868469070392722
+        },
+        "linear": {
+          "selected": 4898,
+          "valid": 4815,
+          "gross_sum_bp": 20353.344830275066,
+          "daily_mean_gross_bp": 4.227070577419536
+        },
+        "mlp": {
+          "selected": 4898,
+          "valid": 4827,
+          "gross_sum_bp": 20312.520332705182,
+          "daily_mean_gross_bp": 4.208104481604554
+        }
+      }
+    },
+    {
+      "day": "2025-06-04",
+      "candidates": 498531,
+      "valid": 489505,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2999,
+      "cross_section_ic": {
+        "reversal": 0.04954014363290475,
+        "linear": 0.05725056578738256,
+        "mlp": 0.06449156574764807,
+        "tcn": 0.06450537193637321
+      },
+      "within_stock_ic": {
+        "reversal": 0.06477290511063,
+        "linear": 0.09207502978916757,
+        "mlp": 0.09910646896903397,
+        "tcn": 0.08445185039935671
+      },
+      "huber_sum": {
+        "zero": 118590.9074660487,
+        "linear": 118572.1859725595,
+        "mlp": 118404.07827890677,
+        "tcn": 118422.9655248005
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4899,
+          "valid": 4853,
+          "gross_sum_bp": 16871.59862374591,
+          "daily_mean_gross_bp": 3.476529697866456
+        },
+        "tcn": {
+          "selected": 4899,
+          "valid": 4840,
+          "gross_sum_bp": 23483.580275185013,
+          "daily_mean_gross_bp": 4.851979395699383
+        },
+        "linear": {
+          "selected": 4899,
+          "valid": 4817,
+          "gross_sum_bp": 22051.58637267913,
+          "daily_mean_gross_bp": 4.577867214589813
+        },
+        "mlp": {
+          "selected": 4899,
+          "valid": 4825,
+          "gross_sum_bp": 19503.620402575612,
+          "daily_mean_gross_bp": 4.0422011197047905
+        }
+      }
+    },
+    {
+      "day": "2025-06-05",
+      "candidates": 499705,
+      "valid": 491732,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2999,
+      "cross_section_ic": {
+        "reversal": 0.052635149047713985,
+        "linear": 0.06393246055971119,
+        "mlp": 0.08022776951145211,
+        "tcn": 0.0740555062365697
+      },
+      "within_stock_ic": {
+        "reversal": 0.0611407118440547,
+        "linear": 0.06842761460261518,
+        "mlp": 0.06127406156464695,
+        "tcn": 0.06860171859057426
+      },
+      "huber_sum": {
+        "zero": 119950.69600365043,
+        "linear": 120045.7028922905,
+        "mlp": 119332.0955418513,
+        "tcn": 119235.75440292706
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4901,
+          "valid": 4858,
+          "gross_sum_bp": 23380.542121009326,
+          "daily_mean_gross_bp": 4.812791708729791
+        },
+        "tcn": {
+          "selected": 4901,
+          "valid": 4863,
+          "gross_sum_bp": 25382.209646002135,
+          "daily_mean_gross_bp": 5.219454996093385
+        },
+        "linear": {
+          "selected": 4901,
+          "valid": 4818,
+          "gross_sum_bp": 23944.28616316612,
+          "daily_mean_gross_bp": 4.969756364293508
+        },
+        "mlp": {
+          "selected": 4901,
+          "valid": 4835,
+          "gross_sum_bp": 26361.52616185911,
+          "daily_mean_gross_bp": 5.452228782183891
+        }
+      }
+    },
+    {
+      "day": "2025-06-06",
+      "candidates": 498675,
+      "valid": 487675,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3004,
+      "cross_section_ic": {
+        "reversal": 0.050631488676936356,
+        "linear": 0.05274369015247013,
+        "mlp": 0.06801768356833368,
+        "tcn": 0.07240209998265404
+      },
+      "within_stock_ic": {
+        "reversal": 0.06143198503784004,
+        "linear": 0.06899008666778231,
+        "mlp": 0.0702444790189168,
+        "tcn": 0.08245341413719703
+      },
+      "huber_sum": {
+        "zero": 114932.99062998162,
+        "linear": 114959.4273253271,
+        "mlp": 114295.61338925024,
+        "tcn": 114100.36609051947
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4897,
+          "valid": 4834,
+          "gross_sum_bp": 9443.212304349685,
+          "daily_mean_gross_bp": 1.9534986148840887
+        },
+        "tcn": {
+          "selected": 4897,
+          "valid": 4849,
+          "gross_sum_bp": 12110.221810212755,
+          "daily_mean_gross_bp": 2.497467892392814
+        },
+        "linear": {
+          "selected": 4897,
+          "valid": 4818,
+          "gross_sum_bp": 16751.73736612577,
+          "daily_mean_gross_bp": 3.4769068837953028
+        },
+        "mlp": {
+          "selected": 4897,
+          "valid": 4823,
+          "gross_sum_bp": 15802.567440421502,
+          "daily_mean_gross_bp": 3.2765016463656442
+        }
+      }
+    },
+    {
+      "day": "2025-06-09",
+      "candidates": 500453,
+      "valid": 494232,
+      "cs_minute_count": 169,
+      "ts_stock_count": 2997,
+      "cross_section_ic": {
+        "reversal": 0.0585277221102135,
+        "linear": 0.07311159633029628,
+        "mlp": 0.08570489494348593,
+        "tcn": 0.08328397392459633
+      },
+      "within_stock_ic": {
+        "reversal": 0.07040893389965114,
+        "linear": 0.07763979712762811,
+        "mlp": 0.07560018534007297,
+        "tcn": 0.08989786093592639
+      },
+      "huber_sum": {
+        "zero": 105221.16652908851,
+        "linear": 104933.00136942866,
+        "mlp": 104545.69441233452,
+        "tcn": 104508.66696324416
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4901,
+          "valid": 4878,
+          "gross_sum_bp": 18252.890509785142,
+          "daily_mean_gross_bp": 3.741879973305687
+        },
+        "tcn": {
+          "selected": 4901,
+          "valid": 4876,
+          "gross_sum_bp": 25885.297501063353,
+          "daily_mean_gross_bp": 5.308715648290269
+        },
+        "linear": {
+          "selected": 4901,
+          "valid": 4845,
+          "gross_sum_bp": 22851.196929059373,
+          "daily_mean_gross_bp": 4.716449314563338
+        },
+        "mlp": {
+          "selected": 4901,
+          "valid": 4854,
+          "gross_sum_bp": 26411.829195962702,
+          "daily_mean_gross_bp": 5.4412503493948705
+        }
+      }
+    },
+    {
+      "day": "2025-06-10",
+      "candidates": 502859,
+      "valid": 496090,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3010,
+      "cross_section_ic": {
+        "reversal": 0.06494000883949928,
+        "linear": 0.07474307794488212,
+        "mlp": 0.07993567963604588,
+        "tcn": 0.06827807602865607
+      },
+      "within_stock_ic": {
+        "reversal": 0.06447420454222968,
+        "linear": 0.04937151302696959,
+        "mlp": 0.03699367053368097,
+        "tcn": 0.04410869207555848
+      },
+      "huber_sum": {
+        "zero": 146083.56112915112,
+        "linear": 147167.24396139046,
+        "mlp": 145924.9875794599,
+        "tcn": 146134.0982929652
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4909,
+          "valid": 4870,
+          "gross_sum_bp": 30223.801695773804,
+          "daily_mean_gross_bp": 6.206119444717413
+        },
+        "tcn": {
+          "selected": 4909,
+          "valid": 4884,
+          "gross_sum_bp": 34872.95114857229,
+          "daily_mean_gross_bp": 7.140243887914065
+        },
+        "linear": {
+          "selected": 4909,
+          "valid": 4854,
+          "gross_sum_bp": 35642.301387170635,
+          "daily_mean_gross_bp": 7.342872144040098
+        },
+        "mlp": {
+          "selected": 4909,
+          "valid": 4850,
+          "gross_sum_bp": 36674.18456019922,
+          "daily_mean_gross_bp": 7.561687538185406
+        }
+      }
+    },
+    {
+      "day": "2025-06-11",
+      "candidates": 500428,
+      "valid": 491261,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3006,
+      "cross_section_ic": {
+        "reversal": 0.057505697106359464,
+        "linear": 0.06857189873131815,
+        "mlp": 0.08368506425359748,
+        "tcn": 0.08242388847052988
+      },
+      "within_stock_ic": {
+        "reversal": 0.07341569967251345,
+        "linear": 0.07409605008730955,
+        "mlp": 0.0909669767909498,
+        "tcn": 0.08351458693621878
+      },
+      "huber_sum": {
+        "zero": 107373.90208791687,
+        "linear": 107116.09727698861,
+        "mlp": 106503.98549017074,
+        "tcn": 106431.15515818687
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4905,
+          "valid": 4866,
+          "gross_sum_bp": 7587.384938250065,
+          "daily_mean_gross_bp": 1.5592652976264005
+        },
+        "tcn": {
+          "selected": 4905,
+          "valid": 4856,
+          "gross_sum_bp": 19111.212645176816,
+          "daily_mean_gross_bp": 3.935587447524056
+        },
+        "linear": {
+          "selected": 4905,
+          "valid": 4811,
+          "gross_sum_bp": 9193.949551029269,
+          "daily_mean_gross_bp": 1.9110267202305693
+        },
+        "mlp": {
+          "selected": 4905,
+          "valid": 4819,
+          "gross_sum_bp": 14818.448873272686,
+          "daily_mean_gross_bp": 3.0750049539889366
+        }
+      }
+    },
+    {
+      "day": "2025-06-12",
+      "candidates": 502103,
+      "valid": 494453,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3011,
+      "cross_section_ic": {
+        "reversal": 0.06584111152042582,
+        "linear": 0.0698824006083596,
+        "mlp": 0.08330904327291597,
+        "tcn": 0.0776226150241963
+      },
+      "within_stock_ic": {
+        "reversal": 0.08562714223733849,
+        "linear": 0.061766526879376234,
+        "mlp": 0.08307662685947946,
+        "tcn": 0.08479189626716739
+      },
+      "huber_sum": {
+        "zero": 120168.08290331959,
+        "linear": 120607.8970966698,
+        "mlp": 119609.99221649919,
+        "tcn": 119639.04694531045
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4910,
+          "valid": 4875,
+          "gross_sum_bp": 27236.225128830618,
+          "daily_mean_gross_bp": 5.586917975144742
+        },
+        "tcn": {
+          "selected": 4910,
+          "valid": 4875,
+          "gross_sum_bp": 29937.657561084532,
+          "daily_mean_gross_bp": 6.1410579612481095
+        },
+        "linear": {
+          "selected": 4910,
+          "valid": 4856,
+          "gross_sum_bp": 25820.13788308047,
+          "daily_mean_gross_bp": 5.3171618375371645
+        },
+        "mlp": {
+          "selected": 4910,
+          "valid": 4851,
+          "gross_sum_bp": 31241.608409638204,
+          "daily_mean_gross_bp": 6.440240859541992
+        }
+      }
+    },
+    {
+      "day": "2025-06-13",
+      "candidates": 504694,
+      "valid": 500168,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3016,
+      "cross_section_ic": {
+        "reversal": 0.07022585536929833,
+        "linear": 0.07709667129530987,
+        "mlp": 0.09436638871052243,
+        "tcn": 0.09261357844852555
+      },
+      "within_stock_ic": {
+        "reversal": 0.09243602878131947,
+        "linear": 0.10523000189444918,
+        "mlp": 0.11955073692031498,
+        "tcn": 0.1016553786985211
+      },
+      "huber_sum": {
+        "zero": 147551.31563641934,
+        "linear": 146313.64635778608,
+        "mlp": 145828.95324245683,
+        "tcn": 145724.53574856478
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4951,
+          "valid": 4946,
+          "gross_sum_bp": 13069.12611765611,
+          "daily_mean_gross_bp": 2.6423627411354853
+        },
+        "tcn": {
+          "selected": 4951,
+          "valid": 4934,
+          "gross_sum_bp": 13699.482495169183,
+          "daily_mean_gross_bp": 2.7765469183561375
+        },
+        "linear": {
+          "selected": 4951,
+          "valid": 4923,
+          "gross_sum_bp": 17804.16097795925,
+          "daily_mean_gross_bp": 3.616526706877768
+        },
+        "mlp": {
+          "selected": 4951,
+          "valid": 4911,
+          "gross_sum_bp": 13562.138096276067,
+          "daily_mean_gross_bp": 2.7615838110926627
+        }
+      }
+    },
+    {
+      "day": "2025-06-16",
+      "candidates": 503114,
+      "valid": 495000,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3019,
+      "cross_section_ic": {
+        "reversal": 0.04744287044106483,
+        "linear": 0.056736491482000426,
+        "mlp": 0.07249322485961483,
+        "tcn": 0.06921123849974743
+      },
+      "within_stock_ic": {
+        "reversal": 0.055306933367335435,
+        "linear": 0.08196726706744081,
+        "mlp": 0.08458500976796576,
+        "tcn": 0.08288953853668679
+      },
+      "huber_sum": {
+        "zero": 112931.18299301993,
+        "linear": 112830.32639506191,
+        "mlp": 112254.45472228643,
+        "tcn": 112290.57277979146
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4921,
+          "valid": 4886,
+          "gross_sum_bp": 17118.463404568123,
+          "daily_mean_gross_bp": 3.5035741720360467
+        },
+        "tcn": {
+          "selected": 4921,
+          "valid": 4878,
+          "gross_sum_bp": 19327.588184287808,
+          "daily_mean_gross_bp": 3.962195199730998
+        },
+        "linear": {
+          "selected": 4921,
+          "valid": 4847,
+          "gross_sum_bp": 24866.23481728268,
+          "daily_mean_gross_bp": 5.130232064634347
+        },
+        "mlp": {
+          "selected": 4921,
+          "valid": 4849,
+          "gross_sum_bp": 22621.343072473668,
+          "daily_mean_gross_bp": 4.665156335837011
+        }
+      }
+    },
+    {
+      "day": "2025-06-17",
+      "candidates": 502774,
+      "valid": 493115,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3022,
+      "cross_section_ic": {
+        "reversal": 0.061358496832434224,
+        "linear": 0.06518069889603138,
+        "mlp": 0.07894033442562891,
+        "tcn": 0.08271436356466251
+      },
+      "within_stock_ic": {
+        "reversal": 0.04337458466976877,
+        "linear": 0.10031904362171522,
+        "mlp": 0.1177127411248133,
+        "tcn": 0.08568069041784468
+      },
+      "huber_sum": {
+        "zero": 121367.29895434967,
+        "linear": 120505.42429486272,
+        "mlp": 120428.12462161707,
+        "tcn": 120434.26163879392
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4928,
+          "valid": 4870,
+          "gross_sum_bp": 14377.294213678244,
+          "daily_mean_gross_bp": 2.952216470981159
+        },
+        "tcn": {
+          "selected": 4928,
+          "valid": 4885,
+          "gross_sum_bp": 12562.45414144203,
+          "daily_mean_gross_bp": 2.571638514113005
+        },
+        "linear": {
+          "selected": 4928,
+          "valid": 4838,
+          "gross_sum_bp": 13067.096604956027,
+          "daily_mean_gross_bp": 2.7009294346746646
+        },
+        "mlp": {
+          "selected": 4928,
+          "valid": 4843,
+          "gross_sum_bp": 12383.045817812073,
+          "daily_mean_gross_bp": 2.5568956881709837
+        }
+      }
+    },
+    {
+      "day": "2025-06-18",
+      "candidates": 503009,
+      "valid": 492341,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3023,
+      "cross_section_ic": {
+        "reversal": 0.06697602520943943,
+        "linear": 0.07690993574860544,
+        "mlp": 0.08538351373132966,
+        "tcn": 0.0777899184508454
+      },
+      "within_stock_ic": {
+        "reversal": 0.06373821887035444,
+        "linear": 0.10201071942034756,
+        "mlp": 0.10290953056486837,
+        "tcn": 0.08388367338563703
+      },
+      "huber_sum": {
+        "zero": 118165.76282520036,
+        "linear": 117047.1036381801,
+        "mlp": 116851.19489616907,
+        "tcn": 116979.18919907376
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4941,
+          "valid": 4893,
+          "gross_sum_bp": 14437.83695491439,
+          "daily_mean_gross_bp": 2.950712641511218
+        },
+        "tcn": {
+          "selected": 4941,
+          "valid": 4879,
+          "gross_sum_bp": 22710.244952387096,
+          "daily_mean_gross_bp": 4.654692550192068
+        },
+        "linear": {
+          "selected": 4941,
+          "valid": 4856,
+          "gross_sum_bp": 20652.140417196504,
+          "daily_mean_gross_bp": 4.25291194752811
+        },
+        "mlp": {
+          "selected": 4941,
+          "valid": 4865,
+          "gross_sum_bp": 25976.386789007753,
+          "daily_mean_gross_bp": 5.339442299898819
+        }
+      }
+    },
+    {
+      "day": "2025-06-19",
+      "candidates": 504485,
+      "valid": 497184,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3021,
+      "cross_section_ic": {
+        "reversal": 0.07453536661529607,
+        "linear": 0.07055954014838986,
+        "mlp": 0.09325603512153358,
+        "tcn": 0.09598593909042685
+      },
+      "within_stock_ic": {
+        "reversal": 0.10351032670352973,
+        "linear": 0.07625061579743875,
+        "mlp": 0.08050721476281307,
+        "tcn": 0.08947391034637976
+      },
+      "huber_sum": {
+        "zero": 145223.27929223754,
+        "linear": 146022.42970666286,
+        "mlp": 143894.7060461831,
+        "tcn": 143270.77512106067
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4949,
+          "valid": 4911,
+          "gross_sum_bp": 4209.811485381123,
+          "daily_mean_gross_bp": 0.8572208278112651
+        },
+        "tcn": {
+          "selected": 4949,
+          "valid": 4919,
+          "gross_sum_bp": 4628.663591017581,
+          "daily_mean_gross_bp": 0.9409765381210776
+        },
+        "linear": {
+          "selected": 4949,
+          "valid": 4897,
+          "gross_sum_bp": 3260.5589848153045,
+          "daily_mean_gross_bp": 0.6658278506872176
+        },
+        "mlp": {
+          "selected": 4949,
+          "valid": 4888,
+          "gross_sum_bp": 4617.973605600428,
+          "daily_mean_gross_bp": 0.9447572842881399
+        }
+      }
+    },
+    {
+      "day": "2025-06-20",
+      "candidates": 502278,
+      "valid": 491641,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3021,
+      "cross_section_ic": {
+        "reversal": 0.05547856470608949,
+        "linear": 0.08141986827292265,
+        "mlp": 0.08837576900135793,
+        "tcn": 0.08852239240499014
+      },
+      "within_stock_ic": {
+        "reversal": 0.05144539216075741,
+        "linear": 0.1456255693779909,
+        "mlp": 0.1320278345410894,
+        "tcn": 0.09822652471451192
+      },
+      "huber_sum": {
+        "zero": 128168.79263083062,
+        "linear": 126369.85586620704,
+        "mlp": 126471.29830079158,
+        "tcn": 126618.08076233948
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4928,
+          "valid": 4888,
+          "gross_sum_bp": 8975.375383921566,
+          "daily_mean_gross_bp": 1.8362060932736428
+        },
+        "tcn": {
+          "selected": 4928,
+          "valid": 4889,
+          "gross_sum_bp": 16013.202652874426,
+          "daily_mean_gross_bp": 3.2753533755112345
+        },
+        "linear": {
+          "selected": 4928,
+          "valid": 4848,
+          "gross_sum_bp": 13254.953979133483,
+          "daily_mean_gross_bp": 2.734107668963177
+        },
+        "mlp": {
+          "selected": 4928,
+          "valid": 4860,
+          "gross_sum_bp": 13279.595115466496,
+          "daily_mean_gross_bp": 2.7324269784910484
+        }
+      }
+    },
+    {
+      "day": "2025-06-23",
+      "candidates": 502117,
+      "valid": 494536,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3011,
+      "cross_section_ic": {
+        "reversal": 0.06527461336846158,
+        "linear": 0.09005897809864642,
+        "mlp": 0.10097181768800285,
+        "tcn": 0.0830226148410052
+      },
+      "within_stock_ic": {
+        "reversal": 0.046285264459211856,
+        "linear": 0.05985404153454696,
+        "mlp": 0.09018507347518806,
+        "tcn": 0.07190796574057168
+      },
+      "huber_sum": {
+        "zero": 114771.71746072461,
+        "linear": 115191.8921141432,
+        "mlp": 114283.61486252723,
+        "tcn": 114449.50384364964
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4912,
+          "valid": 4866,
+          "gross_sum_bp": 26439.755075458248,
+          "daily_mean_gross_bp": 5.433570710122945
+        },
+        "tcn": {
+          "selected": 4912,
+          "valid": 4873,
+          "gross_sum_bp": 28218.129063611475,
+          "daily_mean_gross_bp": 5.790709842727575
+        },
+        "linear": {
+          "selected": 4912,
+          "valid": 4832,
+          "gross_sum_bp": 30722.50502739233,
+          "daily_mean_gross_bp": 6.35813431858285
+        },
+        "mlp": {
+          "selected": 4912,
+          "valid": 4858,
+          "gross_sum_bp": 31753.744884971853,
+          "daily_mean_gross_bp": 6.536382232394371
+        }
+      }
+    },
+    {
+      "day": "2025-06-24",
+      "candidates": 500742,
+      "valid": 494571,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3006,
+      "cross_section_ic": {
+        "reversal": 0.06805620489231853,
+        "linear": 0.07639741834408759,
+        "mlp": 0.08778591716076525,
+        "tcn": 0.08125794741123898
+      },
+      "within_stock_ic": {
+        "reversal": 0.07851181821313,
+        "linear": 0.08114875617289088,
+        "mlp": 0.08232068358578365,
+        "tcn": 0.08464411628855967
+      },
+      "huber_sum": {
+        "zero": 108031.08491823643,
+        "linear": 107770.83125618019,
+        "mlp": 107455.25121504955,
+        "tcn": 107539.99688986817
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4901,
+          "valid": 4861,
+          "gross_sum_bp": 15250.829042123842,
+          "daily_mean_gross_bp": 3.137385114610953
+        },
+        "tcn": {
+          "selected": 4901,
+          "valid": 4872,
+          "gross_sum_bp": 22878.9531429711,
+          "daily_mean_gross_bp": 4.696008444780603
+        },
+        "linear": {
+          "selected": 4901,
+          "valid": 4837,
+          "gross_sum_bp": 23050.443838267176,
+          "daily_mean_gross_bp": 4.7654421828131435
+        },
+        "mlp": {
+          "selected": 4901,
+          "valid": 4853,
+          "gross_sum_bp": 22304.3123998565,
+          "daily_mean_gross_bp": 4.595984421977437
+        }
+      }
+    },
+    {
+      "day": "2025-06-25",
+      "candidates": 503557,
+      "valid": 497406,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3018,
+      "cross_section_ic": {
+        "reversal": 0.059802011309828144,
+        "linear": 0.068571547708988,
+        "mlp": 0.08779388620751753,
+        "tcn": 0.08864442544978111
+      },
+      "within_stock_ic": {
+        "reversal": 0.028168484408330887,
+        "linear": 0.04626313207077385,
+        "mlp": 0.06857932102390492,
+        "tcn": 0.07654506933048422
+      },
+      "huber_sum": {
+        "zero": 124126.84462558427,
+        "linear": 124926.3127140617,
+        "mlp": 123950.8221852473,
+        "tcn": 123740.92674231494
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4932,
+          "valid": 4898,
+          "gross_sum_bp": 17651.524954390206,
+          "daily_mean_gross_bp": 3.60382297966317
+        },
+        "tcn": {
+          "selected": 4932,
+          "valid": 4894,
+          "gross_sum_bp": 25504.50019709077,
+          "daily_mean_gross_bp": 5.211381323475842
+        },
+        "linear": {
+          "selected": 4932,
+          "valid": 4860,
+          "gross_sum_bp": 23867.90700570997,
+          "daily_mean_gross_bp": 4.911091976483533
+        },
+        "mlp": {
+          "selected": 4932,
+          "valid": 4878,
+          "gross_sum_bp": 26337.124021801777,
+          "daily_mean_gross_bp": 5.399164416113526
+        }
+      }
+    },
+    {
+      "day": "2025-06-26",
+      "candidates": 502399,
+      "valid": 495271,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3013,
+      "cross_section_ic": {
+        "reversal": 0.055598278639316615,
+        "linear": 0.05784031146185158,
+        "mlp": 0.0815414035242485,
+        "tcn": 0.08141115122486976
+      },
+      "within_stock_ic": {
+        "reversal": 0.03577383146619563,
+        "linear": 0.05770161101851503,
+        "mlp": 0.054802550210854256,
+        "tcn": 0.04472392126989767
+      },
+      "huber_sum": {
+        "zero": 122337.7046064417,
+        "linear": 122636.81096061211,
+        "mlp": 121709.64849614303,
+        "tcn": 121748.94840099361
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4909,
+          "valid": 4873,
+          "gross_sum_bp": 9446.462083138913,
+          "daily_mean_gross_bp": 1.938531106738952
+        },
+        "tcn": {
+          "selected": 4909,
+          "valid": 4874,
+          "gross_sum_bp": 18183.88963150285,
+          "daily_mean_gross_bp": 3.7307939334228255
+        },
+        "linear": {
+          "selected": 4909,
+          "valid": 4841,
+          "gross_sum_bp": 16289.214949367173,
+          "daily_mean_gross_bp": 3.3648450628727895
+        },
+        "mlp": {
+          "selected": 4909,
+          "valid": 4860,
+          "gross_sum_bp": 21506.95992619289,
+          "daily_mean_gross_bp": 4.425300396335985
+        }
+      }
+    },
+    {
+      "day": "2025-06-27",
+      "candidates": 503560,
+      "valid": 494865,
+      "cs_minute_count": 169,
+      "ts_stock_count": 3025,
+      "cross_section_ic": {
+        "reversal": 0.05909027868541759,
+        "linear": 0.059588406711212565,
+        "mlp": 0.07724305921640576,
+        "tcn": 0.07613132933756216
+      },
+      "within_stock_ic": {
+        "reversal": 0.08217512863727304,
+        "linear": 0.0798226013522541,
+        "mlp": 0.08647198252976421,
+        "tcn": 0.08356408179134449
+      },
+      "huber_sum": {
+        "zero": 120222.92850437031,
+        "linear": 119854.24949036806,
+        "mlp": 119301.49455074855,
+        "tcn": 119341.37259214035
+      },
+      "top_one_percent": {
+        "reversal": {
+          "selected": 4936,
+          "valid": 4897,
+          "gross_sum_bp": 11131.361936793684,
+          "daily_mean_gross_bp": 2.2730982104949327
+        },
+        "tcn": {
+          "selected": 4936,
+          "valid": 4891,
+          "gross_sum_bp": 13307.173506421806,
+          "daily_mean_gross_bp": 2.7207469855697823
+        },
+        "linear": {
+          "selected": 4936,
+          "valid": 4860,
+          "gross_sum_bp": 11017.843104337762,
+          "daily_mean_gross_bp": 2.267045906242338
+        },
+        "mlp": {
+          "selected": 4936,
+          "valid": 4881,
+          "gross_sum_bp": 17202.869344537092,
+          "daily_mean_gross_bp": 3.524455919798626
+        }
+      }
+    }
+  ],
+  "plan_sha256": "82c33b388aeec7dd7c939c0998e4c0b57ad35ed09b12169c45d0ca1fc9815858"
+}

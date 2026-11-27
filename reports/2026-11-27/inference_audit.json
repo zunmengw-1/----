@@ -1,0 +1,505 @@
+{
+  "provenance": {
+    "format": "flat_window_holdout_v1",
+    "model16_sha256": "0f9bb3f2cd3302effe1de326c3d38819d3cb9393ab4867b91ebb4cd34cbfa980",
+    "mlp_sha256": "b647cb6755e3eabaf3a3550846bd55bab20e3cd3c26b56795453cf20a92e6bd4",
+    "linear_sha256": "24d2b2f09a2c1fd868f6684bc955963c165048500b4bb8acfd6654bd560626b4",
+    "inference_script_sha256": "83f4d94902ea1831b714c2910b9cdc60a983641bc3facdca4e703eb62189ed1a",
+    "baseline_module_sha256": "732dfc4ff16ac7fb69b7b02ef4cd042ac606b8ac945931e5ec1dbfc1d0d405e0",
+    "training_sha256": "0cedb74d33397e546f2b31f916d8c399d1ded23e8b84f83912f3b2f8910899a8",
+    "batches": "5000",
+    "holdout_inference_module_sha256": "336b6ac59222944f22ca0d4c07d3656a258f5992e435db8c67597f7f4f2866b8",
+    "return_label": "next_open_to_t_plus_5_close",
+    "device": "cpu",
+    "batch_size": "2048",
+    "metadata_sha256": "477707a4ff29437e7080c26591051cc0e170ac45f2134d7c49e77691b859445b",
+    "qlib_source_signature": "c7fb8d435135721d8c19317e7512e58800a5d348ef47a13e974d90ac2a021e34"
+  },
+  "gate_reproduction": {
+    "date": "2025-03-18",
+    "sample_rows": 338,
+    "gate16_cpu_vs_saved_mps_max_abs_diff": 1.1550582712516189e-10,
+    "keys_and_labels_exact": true
+  },
+  "rows": 33362162,
+  "valid": 32834005,
+  "daily": [
+    {
+      "date": "2025-03-18",
+      "rows": 506941,
+      "valid": 498242,
+      "status": "written",
+      "seconds": 7.15
+    },
+    {
+      "date": "2025-03-19",
+      "rows": 507410,
+      "valid": 499282,
+      "status": "written",
+      "seconds": 2.66
+    },
+    {
+      "date": "2025-03-20",
+      "rows": 506026,
+      "valid": 498744,
+      "status": "written",
+      "seconds": 2.7
+    },
+    {
+      "date": "2025-03-21",
+      "rows": 508705,
+      "valid": 504509,
+      "status": "written",
+      "seconds": 2.68
+    },
+    {
+      "date": "2025-03-24",
+      "rows": 506617,
+      "valid": 504544,
+      "status": "written",
+      "seconds": 2.74
+    },
+    {
+      "date": "2025-03-25",
+      "rows": 505483,
+      "valid": 497498,
+      "status": "written",
+      "seconds": 2.72
+    },
+    {
+      "date": "2025-03-26",
+      "rows": 506295,
+      "valid": 499552,
+      "status": "written",
+      "seconds": 2.67
+    },
+    {
+      "date": "2025-03-27",
+      "rows": 504776,
+      "valid": 494581,
+      "status": "written",
+      "seconds": 2.68
+    },
+    {
+      "date": "2025-03-28",
+      "rows": 507970,
+      "valid": 500115,
+      "status": "written",
+      "seconds": 2.73
+    },
+    {
+      "date": "2025-03-31",
+      "rows": 507471,
+      "valid": 501936,
+      "status": "written",
+      "seconds": 2.66
+    },
+    {
+      "date": "2025-04-01",
+      "rows": 505933,
+      "valid": 496693,
+      "status": "written",
+      "seconds": 2.72
+    },
+    {
+      "date": "2025-04-02",
+      "rows": 505398,
+      "valid": 492468,
+      "status": "written",
+      "seconds": 2.65
+    },
+    {
+      "date": "2025-04-03",
+      "rows": 504695,
+      "valid": 494821,
+      "status": "written",
+      "seconds": 6.09
+    },
+    {
+      "date": "2025-04-07",
+      "rows": 243296,
+      "valid": 242279,
+      "status": "written",
+      "seconds": 2.01
+    },
+    {
+      "date": "2025-04-08",
+      "rows": 476385,
+      "valid": 473828,
+      "status": "written",
+      "seconds": 6.33
+    },
+    {
+      "date": "2025-04-09",
+      "rows": 507224,
+      "valid": 504063,
+      "status": "written",
+      "seconds": 4.49
+    },
+    {
+      "date": "2025-04-10",
+      "rows": 499286,
+      "valid": 494384,
+      "status": "written",
+      "seconds": 2.77
+    },
+    {
+      "date": "2025-04-11",
+      "rows": 504352,
+      "valid": 496768,
+      "status": "written",
+      "seconds": 3.07
+    },
+    {
+      "date": "2025-04-14",
+      "rows": 500345,
+      "valid": 491209,
+      "status": "written",
+      "seconds": 2.96
+    },
+    {
+      "date": "2025-04-15",
+      "rows": 505819,
+      "valid": 495246,
+      "status": "written",
+      "seconds": 2.88
+    },
+    {
+      "date": "2025-04-16",
+      "rows": 509921,
+      "valid": 502098,
+      "status": "written",
+      "seconds": 2.82
+    },
+    {
+      "date": "2025-04-17",
+      "rows": 502792,
+      "valid": 492798,
+      "status": "written",
+      "seconds": 2.83
+    },
+    {
+      "date": "2025-04-21",
+      "rows": 502378,
+      "valid": 493656,
+      "status": "written",
+      "seconds": 3.08
+    },
+    {
+      "date": "2025-04-22",
+      "rows": 500601,
+      "valid": 488652,
+      "status": "written",
+      "seconds": 3.26
+    },
+    {
+      "date": "2025-04-23",
+      "rows": 502020,
+      "valid": 491999,
+      "status": "written",
+      "seconds": 4.34
+    },
+    {
+      "date": "2025-04-24",
+      "rows": 505716,
+      "valid": 497784,
+      "status": "written",
+      "seconds": 3.12
+    },
+    {
+      "date": "2025-04-25",
+      "rows": 502497,
+      "valid": 492474,
+      "status": "written",
+      "seconds": 2.83
+    },
+    {
+      "date": "2025-04-28",
+      "rows": 500030,
+      "valid": 489723,
+      "status": "written",
+      "seconds": 2.59
+    },
+    {
+      "date": "2025-04-29",
+      "rows": 495568,
+      "valid": 486662,
+      "status": "written",
+      "seconds": 8.67
+    },
+    {
+      "date": "2025-04-30",
+      "rows": 497123,
+      "valid": 490030,
+      "status": "written",
+      "seconds": 4.53
+    },
+    {
+      "date": "2025-05-06",
+      "rows": 497515,
+      "valid": 493525,
+      "status": "written",
+      "seconds": 2.7
+    },
+    {
+      "date": "2025-05-07",
+      "rows": 499806,
+      "valid": 494789,
+      "status": "written",
+      "seconds": 2.81
+    },
+    {
+      "date": "2025-05-08",
+      "rows": 499414,
+      "valid": 493085,
+      "status": "written",
+      "seconds": 2.64
+    },
+    {
+      "date": "2025-05-09",
+      "rows": 501743,
+      "valid": 494060,
+      "status": "written",
+      "seconds": 2.72
+    },
+    {
+      "date": "2025-05-12",
+      "rows": 498732,
+      "valid": 487279,
+      "status": "written",
+      "seconds": 3.04
+    },
+    {
+      "date": "2025-05-13",
+      "rows": 499902,
+      "valid": 490056,
+      "status": "written",
+      "seconds": 2.67
+    },
+    {
+      "date": "2025-05-14",
+      "rows": 500280,
+      "valid": 492692,
+      "status": "written",
+      "seconds": 2.57
+    },
+    {
+      "date": "2025-05-15",
+      "rows": 499460,
+      "valid": 489505,
+      "status": "written",
+      "seconds": 2.56
+    },
+    {
+      "date": "2025-05-16",
+      "rows": 498385,
+      "valid": 489090,
+      "status": "written",
+      "seconds": 2.59
+    },
+    {
+      "date": "2025-05-19",
+      "rows": 497116,
+      "valid": 490247,
+      "status": "written",
+      "seconds": 2.58
+    },
+    {
+      "date": "2025-05-20",
+      "rows": 497812,
+      "valid": 490189,
+      "status": "written",
+      "seconds": 2.58
+    },
+    {
+      "date": "2025-05-21",
+      "rows": 499652,
+      "valid": 490445,
+      "status": "written",
+      "seconds": 2.63
+    },
+    {
+      "date": "2025-05-22",
+      "rows": 502250,
+      "valid": 496840,
+      "status": "written",
+      "seconds": 4.16
+    },
+    {
+      "date": "2025-05-23",
+      "rows": 502170,
+      "valid": 494073,
+      "status": "written",
+      "seconds": 6.54
+    },
+    {
+      "date": "2025-05-27",
+      "rows": 497987,
+      "valid": 487024,
+      "status": "written",
+      "seconds": 4.26
+    },
+    {
+      "date": "2025-05-28",
+      "rows": 498936,
+      "valid": 488505,
+      "status": "written",
+      "seconds": 2.74
+    },
+    {
+      "date": "2025-05-29",
+      "rows": 497745,
+      "valid": 491611,
+      "status": "written",
+      "seconds": 2.67
+    },
+    {
+      "date": "2025-05-30",
+      "rows": 500765,
+      "valid": 493044,
+      "status": "written",
+      "seconds": 2.79
+    },
+    {
+      "date": "2025-06-03",
+      "rows": 497936,
+      "valid": 490262,
+      "status": "written",
+      "seconds": 2.63
+    },
+    {
+      "date": "2025-06-04",
+      "rows": 498531,
+      "valid": 489505,
+      "status": "written",
+      "seconds": 2.7
+    },
+    {
+      "date": "2025-06-05",
+      "rows": 499705,
+      "valid": 491732,
+      "status": "written",
+      "seconds": 2.79
+    },
+    {
+      "date": "2025-06-06",
+      "rows": 498675,
+      "valid": 487675,
+      "status": "written",
+      "seconds": 2.7
+    },
+    {
+      "date": "2025-06-09",
+      "rows": 500453,
+      "valid": 494232,
+      "status": "written",
+      "seconds": 2.68
+    },
+    {
+      "date": "2025-06-10",
+      "rows": 502859,
+      "valid": 496090,
+      "status": "written",
+      "seconds": 2.72
+    },
+    {
+      "date": "2025-06-11",
+      "rows": 500428,
+      "valid": 491261,
+      "status": "written",
+      "seconds": 2.78
+    },
+    {
+      "date": "2025-06-12",
+      "rows": 502103,
+      "valid": 494453,
+      "status": "written",
+      "seconds": 2.76
+    },
+    {
+      "date": "2025-06-13",
+      "rows": 504694,
+      "valid": 500168,
+      "status": "written",
+      "seconds": 2.65
+    },
+    {
+      "date": "2025-06-16",
+      "rows": 503114,
+      "valid": 495000,
+      "status": "written",
+      "seconds": 6.89
+    },
+    {
+      "date": "2025-06-17",
+      "rows": 502774,
+      "valid": 493115,
+      "status": "written",
+      "seconds": 4.93
+    },
+    {
+      "date": "2025-06-18",
+      "rows": 503009,
+      "valid": 492341,
+      "status": "written",
+      "seconds": 2.71
+    },
+    {
+      "date": "2025-06-19",
+      "rows": 504485,
+      "valid": 497184,
+      "status": "written",
+      "seconds": 2.63
+    },
+    {
+      "date": "2025-06-20",
+      "rows": 502278,
+      "valid": 491641,
+      "status": "written",
+      "seconds": 2.74
+    },
+    {
+      "date": "2025-06-23",
+      "rows": 502117,
+      "valid": 494536,
+      "status": "written",
+      "seconds": 2.66
+    },
+    {
+      "date": "2025-06-24",
+      "rows": 500742,
+      "valid": 494571,
+      "status": "written",
+      "seconds": 2.69
+    },
+    {
+      "date": "2025-06-25",
+      "rows": 503557,
+      "valid": 497406,
+      "status": "written",
+      "seconds": 2.65
+    },
+    {
+      "date": "2025-06-26",
+      "rows": 502399,
+      "valid": 495271,
+      "status": "written",
+      "seconds": 2.69
+    },
+    {
+      "date": "2025-06-27",
+      "rows": 503560,
+      "valid": 494865,
+      "status": "written",
+      "seconds": 2.69
+    }
+  ],
+  "exact_columns_vs_original_every_date": [
+    "code",
+    "t",
+    "label",
+    "label_valid"
+  ],
+  "all_predictions_finite": true,
+  "scope": "Predeclared 67 validation dates through 2025-06-27. No 2025H2 evaluation."
+}
